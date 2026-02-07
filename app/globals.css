@@ -1,0 +1,250 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --color-cosmic-dark: #0a0a0f;
+    --color-cosmic-darker: #05050a;
+    --color-cosmic-slate: #1a1a2e;
+    --color-gold: #FFD700;
+    --color-gold-light: #FFE55C;
+    --color-gold-dark: #CCA300;
+    --color-emerald: #10B981;
+    --color-emerald-light: #34D399;
+    --color-emerald-dark: #059669;
+  }
+
+  * {
+    border-color: var(--color-cosmic-slate);
+  }
+
+  body {
+    background-color: var(--color-cosmic-dark);
+    color: #f3f4f6;
+    background-image: radial-gradient(ellipse at top, #1a1a2e 0%, #0a0a0f 50%, #05050a 100%);
+    background-attachment: fixed;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+
+  /* Cosmic scrollbar */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background-color: var(--color-cosmic-darker);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: var(--color-cosmic-slate);
+    border-radius: 0.5rem;
+    border: 2px solid var(--color-cosmic-darker);
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: var(--color-gold-dark);
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: 600;
+  }
+
+  h1 {
+    font-size: 2.25rem;
+  }
+
+  h2 {
+    font-size: 1.875rem;
+  }
+
+  h3 {
+    font-size: 1.5rem;
+  }
+
+  @media (min-width: 768px) {
+    h1 { font-size: 3rem; }
+    h2 { font-size: 2.25rem; }
+    h3 { font-size: 1.875rem; }
+  }
+}
+
+@layer components {
+  /* Glow effects */
+  .glow-gold {
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.3), 0 0 40px rgba(255, 215, 0, 0.1);
+  }
+
+  .glow-emerald {
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.3), 0 0 40px rgba(16, 185, 129, 0.1);
+  }
+
+  .glow-text-gold {
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.5), 0 0 20px rgba(255, 215, 0, 0.3);
+  }
+
+  .glow-text-emerald {
+    text-shadow: 0 0 10px rgba(16, 185, 129, 0.5), 0 0 20px rgba(16, 185, 129, 0.3);
+  }
+
+  /* Cosmic threads animation */
+  .cosmic-threads {
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 215, 0, 0.05) 25%,
+      rgba(16, 185, 129, 0.05) 50%,
+      rgba(255, 215, 0, 0.05) 75%,
+      transparent 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 8s linear infinite;
+  }
+
+  /* Rune circle */
+  .rune-circle {
+    position: relative;
+  }
+
+  .rune-circle::before {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    padding: 2px;
+    background: linear-gradient(45deg, #FFD700, #10B981);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0.7;
+  }
+
+  /* Button styles */
+  .btn-primary {
+    background: linear-gradient(to right, var(--color-gold), var(--color-gold-light));
+    color: var(--color-cosmic-dark);
+    font-weight: 600;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    transition: all 0.3s;
+  }
+
+  .btn-primary:hover {
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+  }
+
+  .btn-primary:active {
+    transform: scale(0.95);
+  }
+
+  .btn-secondary {
+    background: linear-gradient(to right, var(--color-emerald), var(--color-emerald-light));
+    color: white;
+    font-weight: 600;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    transition: all 0.3s;
+  }
+
+  .btn-secondary:hover {
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.5);
+  }
+
+  .btn-secondary:active {
+    transform: scale(0.95);
+  }
+
+  .btn-ghost {
+    border: 1px solid var(--color-gold);
+    color: var(--color-gold);
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    transition: all 0.3s;
+  }
+
+  .btn-ghost:hover {
+    background-color: var(--color-gold);
+    color: var(--color-cosmic-dark);
+  }
+
+  .btn-ghost:active {
+    transform: scale(0.95);
+  }
+
+  /* Card styles */
+  .card-cosmic {
+    background-color: rgba(26, 26, 46, 0.5);
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(255, 215, 0, 0.2);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    transition: all 0.3s;
+  }
+
+  .card-cosmic:hover {
+    border-color: rgba(255, 215, 0, 0.4);
+  }
+
+  /* Input styles */
+  .input-cosmic {
+    background-color: var(--color-cosmic-darker);
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    color: #f3f4f6;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+  }
+
+  .input-cosmic:focus {
+    outline: none;
+    border-color: var(--color-gold);
+    box-shadow: 0 0 0 2px rgba(255, 215, 0, 0.2);
+  }
+
+  .input-cosmic::placeholder {
+    color: #6b7280;
+  }
+
+  /* Slider styles */
+  .slider-cosmic {
+    appearance: none;
+    background-color: var(--color-cosmic-slate);
+    border-radius: 0.5rem;
+  }
+
+  .slider-cosmic::-webkit-slider-thumb {
+    appearance: none;
+    width: 1.25rem;
+    height: 1.25rem;
+    border-radius: 50%;
+    background-color: var(--color-gold);
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+  }
+
+  .slider-cosmic::-moz-range-thumb {
+    width: 1.25rem;
+    height: 1.25rem;
+    border-radius: 50%;
+    background-color: var(--color-gold);
+    cursor: pointer;
+    border: 0;
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+  }
+
+  .slider-cosmic::-webkit-slider-track {
+    height: 0.5rem;
+    background-color: var(--color-cosmic-slate);
+    border-radius: 0.5rem;
+  }
+
+  .slider-cosmic::-moz-range-track {
+    height: 0.5rem;
+    background-color: var(--color-cosmic-slate);
+    border-radius: 0.5rem;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}

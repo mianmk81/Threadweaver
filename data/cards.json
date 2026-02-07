@@ -1,0 +1,1050 @@
+{
+  "cards": [
+    {
+      "id": "packaging-policy",
+      "title": "Packaging Policy Review",
+      "prompt": "Your packaging generates significant waste. What's your approach?",
+      "tags": ["waste", "cost", "policy"],
+      "severity": "medium",
+      "triggers": {
+        "waste_min": 40
+      },
+      "options": [
+        {
+          "id": "compostable",
+          "label": "Switch to 100% compostable packaging",
+          "description": "Higher upfront cost but eliminates plastic waste",
+          "deltas": {
+            "waste": -15,
+            "emissions": -5,
+            "cost": 10,
+            "efficiency": -3,
+            "communityTrust": 12
+          },
+          "explanation": "Compostable packaging reduces landfill waste significantly but requires supplier changes and cost increases."
+        },
+        {
+          "id": "reusable",
+          "label": "Implement reusable container program",
+          "description": "Deposit-return system for containers",
+          "deltas": {
+            "waste": -20,
+            "emissions": -8,
+            "cost": 5,
+            "efficiency": -8,
+            "communityTrust": 15
+          },
+          "explanation": "Reusable containers eliminate single-use waste but require logistics setup and customer buy-in."
+        },
+        {
+          "id": "minimal",
+          "label": "Minimal packaging redesign",
+          "description": "Reduce packaging by 30%, keep existing materials",
+          "deltas": {
+            "waste": -8,
+            "emissions": -3,
+            "cost": -5,
+            "efficiency": 5,
+            "communityTrust": 3
+          },
+          "explanation": "Reducing packaging is cost-effective but provides moderate environmental impact."
+        }
+      ]
+    },
+    {
+      "id": "portion-size",
+      "title": "Portion Size Adjustment",
+      "prompt": "Food waste from oversized portions is increasing. How do you respond?",
+      "tags": ["waste", "cost"],
+      "severity": "easy",
+      "triggers": {
+        "waste_min": 50
+      },
+      "options": [
+        {
+          "id": "reduce-all",
+          "label": "Reduce all portions by 20%",
+          "description": "Standardize smaller portions across menu",
+          "deltas": {
+            "waste": -12,
+            "emissions": -4,
+            "cost": -8,
+            "efficiency": 6,
+            "communityTrust": -5
+          },
+          "explanation": "Smaller portions reduce waste and costs but may disappoint customers initially."
+        },
+        {
+          "id": "size-options",
+          "label": "Offer multiple portion sizes",
+          "description": "Let customers choose small/medium/large",
+          "deltas": {
+            "waste": -10,
+            "emissions": -3,
+            "cost": 3,
+            "efficiency": -4,
+            "communityTrust": 8
+          },
+          "explanation": "Choice empowers customers but adds operational complexity."
+        }
+      ]
+    },
+    {
+      "id": "supplier-local",
+      "title": "Supplier Evaluation: Local vs Bulk",
+      "prompt": "Your current bulk supplier offers lower prices but higher emissions. A local farm co-op is available.",
+      "tags": ["emissions", "cost", "trust"],
+      "severity": "hard",
+      "triggers": {
+        "emissions_min": 45
+      },
+      "options": [
+        {
+          "id": "switch-local",
+          "label": "Switch to local farm co-op",
+          "description": "15% price increase, 60% emission reduction",
+          "deltas": {
+            "waste": -3,
+            "emissions": -18,
+            "cost": 15,
+            "efficiency": -2,
+            "communityTrust": 20
+          },
+          "explanation": "Local sourcing dramatically cuts transport emissions and builds community ties but increases costs."
+        },
+        {
+          "id": "hybrid",
+          "label": "Hybrid approach: 50% local, 50% bulk",
+          "description": "Balance cost and sustainability",
+          "deltas": {
+            "waste": -2,
+            "emissions": -10,
+            "cost": 7,
+            "efficiency": -4,
+            "communityTrust": 10
+          },
+          "explanation": "Splitting suppliers moderates both cost impact and emission reductions."
+        },
+        {
+          "id": "negotiate-bulk",
+          "label": "Negotiate greener shipping with bulk supplier",
+          "description": "Request consolidated deliveries",
+          "deltas": {
+            "waste": 0,
+            "emissions": -5,
+            "cost": -2,
+            "efficiency": 3,
+            "communityTrust": 2
+          },
+          "explanation": "Incremental improvements without major changes to supply chain."
+        }
+      ]
+    },
+    {
+      "id": "waste-audit",
+      "title": "Comprehensive Food Waste Audit",
+      "prompt": "You need data to understand waste patterns. How deep should the audit go?",
+      "tags": ["waste", "efficiency"],
+      "severity": "easy",
+      "triggers": {
+        "waste_min": 55,
+        "efficiency_max": 60
+      },
+      "options": [
+        {
+          "id": "full-audit",
+          "label": "Full 30-day audit with third-party consultant",
+          "description": "Detailed tracking of all waste streams",
+          "deltas": {
+            "waste": -5,
+            "emissions": 0,
+            "cost": 8,
+            "efficiency": 12,
+            "communityTrust": 5
+          },
+          "explanation": "Professional audit provides actionable insights but requires investment."
+        },
+        {
+          "id": "internal-tracking",
+          "label": "Internal staff tracking for 2 weeks",
+          "description": "Train existing staff to log waste",
+          "deltas": {
+            "waste": -3,
+            "emissions": 0,
+            "cost": 2,
+            "efficiency": 6,
+            "communityTrust": 2
+          },
+          "explanation": "Lower-cost approach with moderate data quality."
+        }
+      ]
+    },
+    {
+      "id": "composting-rollout",
+      "title": "Composting Program Launch",
+      "prompt": "Organic waste represents 40% of your total waste. Consider composting infrastructure.",
+      "tags": ["waste", "emissions"],
+      "severity": "medium",
+      "triggers": {
+        "waste_min": 60
+      },
+      "options": [
+        {
+          "id": "onsite-composting",
+          "label": "Install on-site composting system",
+          "description": "Large upfront investment, full control",
+          "deltas": {
+            "waste": -25,
+            "emissions": -12,
+            "cost": 18,
+            "efficiency": -5,
+            "communityTrust": 18
+          },
+          "explanation": "On-site composting eliminates organic waste transport and creates usable compost."
+        },
+        {
+          "id": "partner-service",
+          "label": "Partner with commercial composting service",
+          "description": "Weekly pickup, moderate ongoing cost",
+          "deltas": {
+            "waste": -20,
+            "emissions": -8,
+            "cost": 8,
+            "efficiency": 2,
+            "communityTrust": 12
+          },
+          "explanation": "Commercial service handles logistics but adds recurring fees."
+        },
+        {
+          "id": "pilot-program",
+          "label": "Small pilot with select waste streams",
+          "description": "Test composting with coffee grounds only",
+          "deltas": {
+            "waste": -8,
+            "emissions": -3,
+            "cost": 3,
+            "efficiency": 4,
+            "communityTrust": 5
+          },
+          "explanation": "Low-risk pilot builds knowledge before full commitment."
+        }
+      ]
+    },
+    {
+      "id": "outreach-campaign",
+      "title": "Community Sustainability Outreach",
+      "prompt": "Trust is declining. How do you communicate your sustainability efforts?",
+      "tags": ["trust", "policy"],
+      "severity": "easy",
+      "triggers": {
+        "trust_max": 45
+      },
+      "options": [
+        {
+          "id": "transparency-dashboard",
+          "label": "Launch public sustainability dashboard",
+          "description": "Real-time metrics visible to all",
+          "deltas": {
+            "waste": 0,
+            "emissions": 0,
+            "cost": 5,
+            "efficiency": -2,
+            "communityTrust": 18
+          },
+          "explanation": "Transparency builds trust by making impact measurable and visible."
+        },
+        {
+          "id": "quarterly-reports",
+          "label": "Publish quarterly sustainability reports",
+          "description": "Written summaries with key metrics",
+          "deltas": {
+            "waste": 0,
+            "emissions": 0,
+            "cost": 2,
+            "efficiency": 0,
+            "communityTrust": 10
+          },
+          "explanation": "Regular reporting shows commitment without real-time overhead."
+        },
+        {
+          "id": "social-media",
+          "label": "Social media campaign highlighting wins",
+          "description": "Share sustainability milestones",
+          "deltas": {
+            "waste": 0,
+            "emissions": 0,
+            "cost": 1,
+            "efficiency": 1,
+            "communityTrust": 6
+          },
+          "explanation": "Low-cost awareness building but may appear performative."
+        }
+      ]
+    },
+    {
+      "id": "equipment-upgrade",
+      "title": "Energy-Efficient Equipment Investment",
+      "prompt": "Your kitchen equipment is outdated and inefficient. Consider upgrades.",
+      "tags": ["emissions", "efficiency", "cost"],
+      "severity": "hard",
+      "triggers": {
+        "efficiency_max": 50
+      },
+      "options": [
+        {
+          "id": "full-upgrade",
+          "label": "Replace all major equipment with Energy Star models",
+          "description": "Maximum efficiency, high upfront cost",
+          "deltas": {
+            "waste": -2,
+            "emissions": -20,
+            "cost": 25,
+            "efficiency": 18,
+            "communityTrust": 8
+          },
+          "explanation": "New equipment dramatically reduces energy use but requires significant capital."
+        },
+        {
+          "id": "phased-replacement",
+          "label": "Phase replacement over 18 months",
+          "description": "Replace worst performers first",
+          "deltas": {
+            "waste": -1,
+            "emissions": -12,
+            "cost": 12,
+            "efficiency": 10,
+            "communityTrust": 5
+          },
+          "explanation": "Gradual approach spreads costs while delivering improvements."
+        },
+        {
+          "id": "maintenance-optimize",
+          "label": "Optimize existing equipment with better maintenance",
+          "description": "Professional servicing and scheduling",
+          "deltas": {
+            "waste": 0,
+            "emissions": -5,
+            "cost": 3,
+            "efficiency": 6,
+            "communityTrust": 2
+          },
+          "explanation": "Low-cost efficiency gains without capital expenditure."
+        }
+      ]
+    },
+    {
+      "id": "menu-redesign",
+      "title": "Menu Redesign for Lower Footprint",
+      "prompt": "Your menu features many high-emission items. Consider a sustainability-focused redesign.",
+      "tags": ["emissions", "waste", "trust"],
+      "severity": "hard",
+      "triggers": {
+        "emissions_min": 55
+      },
+      "options": [
+        {
+          "id": "plant-forward",
+          "label": "Shift to 70% plant-based menu",
+          "description": "Reduce meat/dairy offerings significantly",
+          "deltas": {
+            "waste": -8,
+            "emissions": -25,
+            "cost": -5,
+            "efficiency": 5,
+            "communityTrust": 12
+          },
+          "explanation": "Plant-based meals dramatically reduce emissions and often cost less."
+        },
+        {
+          "id": "sustainable-sourcing",
+          "label": "Keep menu, source sustainably-raised meat/dairy",
+          "description": "Higher quality, higher cost animal products",
+          "deltas": {
+            "waste": -2,
+            "emissions": -10,
+            "cost": 12,
+            "efficiency": -3,
+            "communityTrust": 15
+          },
+          "explanation": "Ethical sourcing improves footprint without changing offerings."
+        },
+        {
+          "id": "seasonal-rotation",
+          "label": "Seasonal menu rotation with local ingredients",
+          "description": "Change offerings every 3 months",
+          "deltas": {
+            "waste": -6,
+            "emissions": -15,
+            "cost": 2,
+            "efficiency": -5,
+            "communityTrust": 18
+          },
+          "explanation": "Seasonal approach optimizes for what's available locally."
+        }
+      ]
+    },
+    {
+      "id": "backlash-event",
+      "title": "Community Backlash on Price Increases",
+      "prompt": "Customers are complaining about higher prices from sustainability initiatives. How do you respond?",
+      "tags": ["trust", "cost"],
+      "severity": "medium",
+      "triggers": {
+        "cost_min": 60,
+        "trust_max": 50
+      },
+      "options": [
+        {
+          "id": "transparent-breakdown",
+          "label": "Publish detailed cost breakdown showing why prices increased",
+          "description": "Educate on true cost of sustainability",
+          "deltas": {
+            "waste": 0,
+            "emissions": 0,
+            "cost": 0,
+            "efficiency": 0,
+            "communityTrust": 15
+          },
+          "explanation": "Transparency helps customers understand value of changes."
+        },
+        {
+          "id": "discount-program",
+          "label": "Launch sliding-scale discount for low-income customers",
+          "description": "Absorb cost for those who need it",
+          "deltas": {
+            "waste": 0,
+            "emissions": 0,
+            "cost": 8,
+            "efficiency": -3,
+            "communityTrust": 20
+          },
+          "explanation": "Equity-focused approach maintains access despite price increases."
+        },
+        {
+          "id": "rollback-some",
+          "label": "Temporarily roll back least popular changes",
+          "description": "Keep core initiatives, reduce scope",
+          "deltas": {
+            "waste": 5,
+            "emissions": 3,
+            "cost": -8,
+            "efficiency": 2,
+            "communityTrust": -5
+          },
+          "explanation": "Pragmatic retreat to rebuild support before expanding again."
+        }
+      ]
+    },
+    {
+      "id": "budget-cut",
+      "title": "Unexpected Budget Constraints",
+      "prompt": "Funding has been cut by 15%. What sustainability initiatives are protected?",
+      "tags": ["cost", "efficiency"],
+      "severity": "hard",
+      "triggers": {
+        "cost_min": 65
+      },
+      "options": [
+        {
+          "id": "protect-waste",
+          "label": "Maintain waste reduction programs, cut emissions initiatives",
+          "description": "Prioritize visible waste impact",
+          "deltas": {
+            "waste": -3,
+            "emissions": 8,
+            "cost": -12,
+            "efficiency": -2,
+            "communityTrust": 5
+          },
+          "explanation": "Focus on tangible waste outcomes customers can see."
+        },
+        {
+          "id": "protect-emissions",
+          "label": "Maintain emissions programs, reduce waste spending",
+          "description": "Long-term climate impact priority",
+          "deltas": {
+            "waste": 5,
+            "emissions": -5,
+            "cost": -12,
+            "efficiency": 0,
+            "communityTrust": 3
+          },
+          "explanation": "Climate-first approach even if less visible to customers."
+        },
+        {
+          "id": "efficiency-focus",
+          "label": "Cut everything except efficiency improvements",
+          "description": "Efficiency pays for itself over time",
+          "deltas": {
+            "waste": 3,
+            "emissions": 4,
+            "cost": -10,
+            "efficiency": 8,
+            "communityTrust": -3
+          },
+          "explanation": "Invest only in changes that reduce ongoing costs."
+        }
+      ]
+    },
+    {
+      "id": "water-conservation",
+      "title": "Water Conservation Initiative",
+      "prompt": "Water usage is higher than industry benchmarks. What's your strategy?",
+      "tags": ["emissions", "efficiency", "cost"],
+      "severity": "medium",
+      "triggers": {
+        "efficiency_max": 55
+      },
+      "options": [
+        {
+          "id": "low-flow-fixtures",
+          "label": "Install low-flow fixtures and sensors",
+          "description": "One-time investment, permanent savings",
+          "deltas": {
+            "waste": -2,
+            "emissions": -8,
+            "cost": 10,
+            "efficiency": 12,
+            "communityTrust": 5
+          },
+          "explanation": "Infrastructure upgrade reduces water and energy for heating."
+        },
+        {
+          "id": "operational-changes",
+          "label": "Implement water-saving operational procedures",
+          "description": "Staff training and new protocols",
+          "deltas": {
+            "waste": -1,
+            "emissions": -4,
+            "cost": 2,
+            "efficiency": 6,
+            "communityTrust": 2
+          },
+          "explanation": "Behavioral changes with minimal cost but requiring ongoing enforcement."
+        }
+      ]
+    },
+    {
+      "id": "renewable-energy",
+      "title": "Renewable Energy Transition",
+      "prompt": "Your energy is 100% grid-sourced fossil fuels. Consider renewable options.",
+      "tags": ["emissions", "cost"],
+      "severity": "hard",
+      "triggers": {
+        "emissions_min": 60
+      },
+      "options": [
+        {
+          "id": "solar-installation",
+          "label": "Install rooftop solar panels",
+          "description": "25-year payback, 80% self-sufficiency",
+          "deltas": {
+            "waste": 0,
+            "emissions": -30,
+            "cost": 30,
+            "efficiency": 5,
+            "communityTrust": 15
+          },
+          "explanation": "Solar dramatically cuts emissions but requires major capital investment."
+        },
+        {
+          "id": "renewable-plan",
+          "label": "Switch to utility renewable energy plan",
+          "description": "15% premium on monthly bills",
+          "deltas": {
+            "waste": 0,
+            "emissions": -22,
+            "cost": 15,
+            "efficiency": 0,
+            "communityTrust": 10
+          },
+          "explanation": "Immediate emission reduction with ongoing cost increase."
+        },
+        {
+          "id": "community-solar",
+          "label": "Join community solar cooperative",
+          "description": "Share in local solar farm output",
+          "deltas": {
+            "waste": 0,
+            "emissions": -18,
+            "cost": 8,
+            "efficiency": 2,
+            "communityTrust": 12
+          },
+          "explanation": "Collective approach reduces individual cost burden."
+        }
+      ]
+    },
+    {
+      "id": "staff-training",
+      "title": "Sustainability Training Program",
+      "prompt": "Staff lack knowledge to support sustainability goals. How comprehensive should training be?",
+      "tags": ["efficiency", "trust"],
+      "severity": "easy",
+      "triggers": {
+        "efficiency_max": 50
+      },
+      "options": [
+        {
+          "id": "comprehensive",
+          "label": "Full-day workshop for all staff quarterly",
+          "description": "External trainers, certification program",
+          "deltas": {
+            "waste": -4,
+            "emissions": -3,
+            "cost": 8,
+            "efficiency": 10,
+            "communityTrust": 8
+          },
+          "explanation": "Deep training builds culture but requires time and money."
+        },
+        {
+          "id": "basic-onboarding",
+          "label": "Add sustainability module to onboarding",
+          "description": "1-hour session for new hires",
+          "deltas": {
+            "waste": -2,
+            "emissions": -1,
+            "cost": 2,
+            "efficiency": 5,
+            "communityTrust": 3
+          },
+          "explanation": "Baseline knowledge for all staff with minimal disruption."
+        }
+      ]
+    },
+    {
+      "id": "delivery-model",
+      "title": "Delivery & Takeout Sustainability",
+      "prompt": "Delivery orders are growing. Single-use containers are a major waste source.",
+      "tags": ["waste", "cost"],
+      "severity": "medium",
+      "triggers": {
+        "waste_min": 50
+      },
+      "options": [
+        {
+          "id": "reusable-delivery",
+          "label": "Implement reusable container delivery service",
+          "description": "Customers return containers on next order",
+          "deltas": {
+            "waste": -15,
+            "emissions": -5,
+            "cost": 12,
+            "efficiency": -8,
+            "communityTrust": 12
+          },
+          "explanation": "Eliminates single-use waste but adds logistics complexity."
+        },
+        {
+          "id": "compostable-packaging",
+          "label": "Switch to certified compostable takeout containers",
+          "description": "Partner with composting service",
+          "deltas": {
+            "waste": -10,
+            "emissions": -3,
+            "cost": 8,
+            "efficiency": 0,
+            "communityTrust": 8
+          },
+          "explanation": "Reduces landfill impact if customers have composting access."
+        },
+        {
+          "id": "incentive-own",
+          "label": "Discount for customers who bring their own containers",
+          "description": "10% off for BYO",
+          "deltas": {
+            "waste": -6,
+            "emissions": -2,
+            "cost": -3,
+            "efficiency": 3,
+            "communityTrust": 6
+          },
+          "explanation": "Customer-driven solution with minimal operational change."
+        }
+      ]
+    },
+    {
+      "id": "food-donation",
+      "title": "Surplus Food Donation Program",
+      "prompt": "You have consistent surplus food at end of day. What's your approach?",
+      "tags": ["waste", "trust"],
+      "severity": "easy",
+      "triggers": {
+        "waste_min": 45
+      },
+      "options": [
+        {
+          "id": "partnership-shelter",
+          "label": "Daily donation partnership with local shelter",
+          "description": "Scheduled pickup every evening",
+          "deltas": {
+            "waste": -12,
+            "emissions": -3,
+            "cost": 3,
+            "efficiency": -2,
+            "communityTrust": 18
+          },
+          "explanation": "Redirects food from waste while serving community need."
+        },
+        {
+          "id": "app-based",
+          "label": "List surplus on food rescue app",
+          "description": "Ad-hoc pickups by community members",
+          "deltas": {
+            "waste": -8,
+            "emissions": -2,
+            "cost": 1,
+            "efficiency": 0,
+            "communityTrust": 10
+          },
+          "explanation": "Flexible approach but less reliable than partnership."
+        }
+      ]
+    },
+    {
+      "id": "carbon-offset",
+      "title": "Carbon Offset Program Evaluation",
+      "prompt": "You can't eliminate all emissions. Consider purchasing carbon offsets.",
+      "tags": ["emissions", "cost", "trust"],
+      "severity": "medium",
+      "triggers": {
+        "emissions_min": 40
+      },
+      "options": [
+        {
+          "id": "verified-offsets",
+          "label": "Purchase verified carbon offsets for all operations",
+          "description": "Gold Standard certified projects",
+          "deltas": {
+            "waste": 0,
+            "emissions": -15,
+            "cost": 12,
+            "efficiency": 0,
+            "communityTrust": 8
+          },
+          "explanation": "Offsets compensate for unavoidable emissions but add costs."
+        },
+        {
+          "id": "local-reforestation",
+          "label": "Fund local reforestation project directly",
+          "description": "Plant trees in community spaces",
+          "deltas": {
+            "waste": 0,
+            "emissions": -8,
+            "cost": 8,
+            "efficiency": 0,
+            "communityTrust": 15
+          },
+          "explanation": "Visible local impact builds community connection."
+        },
+        {
+          "id": "skip-offsets",
+          "label": "Skip offsets, invest in direct emission reductions",
+          "description": "Put funds toward efficiency instead",
+          "deltas": {
+            "waste": -2,
+            "emissions": -5,
+            "cost": 8,
+            "efficiency": 8,
+            "communityTrust": 3
+          },
+          "explanation": "Prioritize eliminating emissions over compensating for them."
+        }
+      ]
+    },
+    {
+      "id": "certification-pursuit",
+      "title": "Sustainability Certification Program",
+      "prompt": "Third-party certifications can validate your efforts. Which do you pursue?",
+      "tags": ["trust", "cost"],
+      "severity": "medium",
+      "triggers": {
+        "trust_max": 60
+      },
+      "options": [
+        {
+          "id": "b-corp",
+          "label": "Pursue B Corporation certification",
+          "description": "Comprehensive social/environmental standards",
+          "deltas": {
+            "waste": -3,
+            "emissions": -3,
+            "cost": 15,
+            "efficiency": -2,
+            "communityTrust": 22
+          },
+          "explanation": "Rigorous certification signals serious commitment."
+        },
+        {
+          "id": "green-restaurant",
+          "label": "Green Restaurant Association certification",
+          "description": "Industry-specific sustainability standards",
+          "deltas": {
+            "waste": -5,
+            "emissions": -4,
+            "cost": 8,
+            "efficiency": 3,
+            "communityTrust": 15
+          },
+          "explanation": "Targeted certification for food service operations."
+        },
+        {
+          "id": "self-certified",
+          "label": "Create own sustainability badge and criteria",
+          "description": "Internal standards, public reporting",
+          "deltas": {
+            "waste": -2,
+            "emissions": -2,
+            "cost": 2,
+            "efficiency": 2,
+            "communityTrust": 6
+          },
+          "explanation": "Lower cost but less credibility without third-party validation."
+        }
+      ]
+    },
+    {
+      "id": "supply-chain-audit",
+      "title": "Supply Chain Sustainability Audit",
+      "prompt": "Your suppliers' practices affect your overall footprint. How deep do you audit?",
+      "tags": ["emissions", "trust", "efficiency"],
+      "severity": "hard",
+      "triggers": {
+        "emissions_min": 50
+      },
+      "options": [
+        {
+          "id": "full-lifecycle",
+          "label": "Full lifecycle assessment of top 20 suppliers",
+          "description": "Cradle-to-grave emission tracking",
+          "deltas": {
+            "waste": -5,
+            "emissions": -12,
+            "cost": 18,
+            "efficiency": -3,
+            "communityTrust": 12
+          },
+          "explanation": "Comprehensive data enables targeted supplier changes."
+        },
+        {
+          "id": "questionnaire",
+          "label": "Send sustainability questionnaire to all suppliers",
+          "description": "Self-reported practices and certifications",
+          "deltas": {
+            "waste": -2,
+            "emissions": -5,
+            "cost": 3,
+            "efficiency": 2,
+            "communityTrust": 5
+          },
+          "explanation": "Lightweight approach gathers baseline information."
+        },
+        {
+          "id": "top-tier-only",
+          "label": "Audit only Tier 1 suppliers (direct relationships)",
+          "description": "Focus on immediate partners",
+          "deltas": {
+            "waste": -3,
+            "emissions": -7,
+            "cost": 8,
+            "efficiency": 0,
+            "communityTrust": 8
+          },
+          "explanation": "Manageable scope while addressing major impact sources."
+        }
+      ]
+    },
+    {
+      "id": "innovation-fund",
+      "title": "Sustainability Innovation Fund",
+      "prompt": "Set aside budget for experimental sustainability projects. How much?",
+      "tags": ["cost", "efficiency"],
+      "severity": "easy",
+      "triggers": {
+        "efficiency_max": 65
+      },
+      "options": [
+        {
+          "id": "large-fund",
+          "label": "Allocate 5% of revenue to innovation fund",
+          "description": "Significant R&D capacity",
+          "deltas": {
+            "waste": -3,
+            "emissions": -4,
+            "cost": 15,
+            "efficiency": 8,
+            "communityTrust": 10
+          },
+          "explanation": "Large fund enables ambitious experimental projects."
+        },
+        {
+          "id": "modest-fund",
+          "label": "Allocate 2% of revenue to innovation fund",
+          "description": "Pilot-scale experiments",
+          "deltas": {
+            "waste": -2,
+            "emissions": -2,
+            "cost": 6,
+            "efficiency": 5,
+            "communityTrust": 5
+          },
+          "explanation": "Modest investment allows controlled experimentation."
+        }
+      ]
+    },
+    {
+      "id": "stakeholder-engagement",
+      "title": "Stakeholder Engagement Strategy",
+      "prompt": "Multiple groups want input on sustainability direction. How do you engage?",
+      "tags": ["trust", "policy"],
+      "severity": "medium",
+      "triggers": {
+        "trust_max": 55
+      },
+      "options": [
+        {
+          "id": "advisory-council",
+          "label": "Form sustainability advisory council",
+          "description": "Quarterly meetings with diverse stakeholders",
+          "deltas": {
+            "waste": -2,
+            "emissions": -2,
+            "cost": 5,
+            "efficiency": -3,
+            "communityTrust": 18
+          },
+          "explanation": "Formal structure gives stakeholders voice in decisions."
+        },
+        {
+          "id": "town-halls",
+          "label": "Bi-annual town hall meetings",
+          "description": "Open forums for feedback",
+          "deltas": {
+            "waste": -1,
+            "emissions": -1,
+            "cost": 2,
+            "efficiency": -1,
+            "communityTrust": 12
+          },
+          "explanation": "Public forums build transparency without ongoing commitment."
+        },
+        {
+          "id": "surveys",
+          "label": "Online surveys and suggestion box",
+          "description": "Passive feedback collection",
+          "deltas": {
+            "waste": 0,
+            "emissions": 0,
+            "cost": 1,
+            "efficiency": 1,
+            "communityTrust": 5
+          },
+          "explanation": "Low-touch engagement gathers input without meetings."
+        }
+      ]
+    },
+    {
+      "id": "performance-bonus",
+      "title": "Staff Performance Incentives",
+      "prompt": "Tie staff bonuses to sustainability metrics to drive accountability?",
+      "tags": ["efficiency", "trust"],
+      "severity": "easy",
+      "triggers": {
+        "efficiency_max": 60
+      },
+      "options": [
+        {
+          "id": "team-metrics",
+          "label": "Team bonuses based on monthly waste reduction",
+          "description": "Collective incentive structure",
+          "deltas": {
+            "waste": -8,
+            "emissions": -3,
+            "cost": 6,
+            "efficiency": 10,
+            "communityTrust": 6
+          },
+          "explanation": "Team incentives foster collaboration around shared goals."
+        },
+        {
+          "id": "individual-metrics",
+          "label": "Individual bonuses for sustainability suggestions implemented",
+          "description": "Reward innovation",
+          "deltas": {
+            "waste": -5,
+            "emissions": -2,
+            "cost": 4,
+            "efficiency": 8,
+            "communityTrust": 4
+          },
+          "explanation": "Individual rewards encourage creative problem-solving."
+        },
+        {
+          "id": "no-bonuses",
+          "label": "Keep sustainability part of job expectations, no bonuses",
+          "description": "Intrinsic motivation focus",
+          "deltas": {
+            "waste": -2,
+            "emissions": -1,
+            "cost": 0,
+            "efficiency": 3,
+            "communityTrust": 2
+          },
+          "explanation": "Avoids financializing sustainability but may reduce urgency."
+        }
+      ]
+    },
+    {
+      "id": "expansion-dilemma",
+      "title": "Expansion vs Consolidation",
+      "prompt": "You have an opportunity to expand operations. How does this affect sustainability?",
+      "tags": ["emissions", "cost", "efficiency"],
+      "severity": "hard",
+      "triggers": {
+        "efficiency_min": 60
+      },
+      "options": [
+        {
+          "id": "expand-sustainable",
+          "label": "Expand with sustainability-first facility design",
+          "description": "New location built to green standards",
+          "deltas": {
+            "waste": -5,
+            "emissions": -8,
+            "cost": 25,
+            "efficiency": 12,
+            "communityTrust": 15
+          },
+          "explanation": "Growth opportunity to implement best practices from start."
+        },
+        {
+          "id": "consolidate",
+          "label": "Consolidate to single efficient location",
+          "description": "Increase capacity at existing site",
+          "deltas": {
+            "waste": -8,
+            "emissions": -12,
+            "cost": 8,
+            "efficiency": 15,
+            "communityTrust": 5
+          },
+          "explanation": "Smaller footprint with economies of scale."
+        },
+        {
+          "id": "defer-expansion",
+          "label": "Defer expansion, optimize current operations first",
+          "description": "Perfect sustainability model before scaling",
+          "deltas": {
+            "waste": -3,
+            "emissions": -4,
+            "cost": -5,
+            "efficiency": 8,
+            "communityTrust": 8
+          },
+          "explanation": "Prove sustainability at current scale before growing."
+        }
+      ]
+    }
+  ]
+}
