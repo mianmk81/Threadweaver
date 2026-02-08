@@ -120,10 +120,15 @@ export default function LoomPage() {
           </div>
         </header>
 
-        {/* Main content: 2-column layout (responsive) */}
+        {/* Main content: 3-column layout (responsive) */}
         <div className="flex-1 flex flex-col lg:grid lg:grid-cols-12 gap-4 p-4 overflow-hidden">
+          {/* Left: Thread Panel - Hidden on mobile, sidebar on desktop */}
+          <div className="hidden lg:block lg:col-span-2 overflow-y-auto">
+            <ThreadPanel />
+          </div>
+
           {/* Center: Loom Canvas - Full width on mobile, larger on desktop */}
-          <div className="flex-1 lg:col-span-9 relative min-h-[400px]">
+          <div className="flex-1 lg:col-span-7 relative min-h-[400px]">
             <LoomCanvas />
           </div>
 
