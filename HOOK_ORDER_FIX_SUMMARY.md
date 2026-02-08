@@ -10,8 +10,8 @@ The component had early returns (lines 173 and 184) BEFORE several `useCallback`
 ```
 Line 173: if (!mounted) return <LoadingLoom />
 Line 184: if (!activeThread) return <NoTimeline />
-Line 315: const createWiggleFunction = useCallback(...) ❌ VIOLATION!
-Line 348: const calculateDeformationOffset = useCallback(...) ❌ VIOLATION!
+Line 315: const createWiggleFunction = useCallback(...)  VIOLATION!
+Line 348: const calculateDeformationOffset = useCallback(...)  VIOLATION!
 ```
 
 When `!mounted` or `!activeThread` was true, the component returned early and never executed hooks at lines 315+, causing inconsistent hook counts between renders.
@@ -61,10 +61,10 @@ export default function LoomCanvas() {
 ```
 
 ## React Rules of Hooks Compliance
-✅ All hooks called at top level (not in conditions/loops)
-✅ All hooks called before early returns
-✅ Hook order is consistent across all renders
-✅ No conditional hook execution
+ All hooks called at top level (not in conditions/loops)
+ All hooks called before early returns
+ Hook order is consistent across all renders
+ No conditional hook execution
 
 ## Files Modified
 - `C:\Users\mianm\Downloads\uga\threadweaver\components\loom\LoomCanvas.tsx`

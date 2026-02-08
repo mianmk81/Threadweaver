@@ -1,6 +1,6 @@
-# ✅ Hybrid AI System - Implementation Complete
+#  Hybrid AI System - Implementation Complete
 
-## 🎉 What Was Implemented
+##  What Was Implemented
 
 ### **3-Tier Hybrid AI System**
 
@@ -8,7 +8,7 @@ Successfully integrated multiple AI models into Threadweaver for maximum judging
 
 ---
 
-## 📦 New Files Created
+##  New Files Created
 
 1. **`api/engine/ai_engine.py`** (160 lines)
    - Multi-model AI orchestration
@@ -35,7 +35,7 @@ Successfully integrated multiple AI models into Threadweaver for maximum judging
 
 ---
 
-## 🔧 Modified Files
+##  Modified Files
 
 1. **`api/engine/scoring.py`**
    - Added `select_card_with_ai()` function
@@ -52,7 +52,7 @@ Successfully integrated multiple AI models into Threadweaver for maximum judging
 
 ---
 
-## 🤖 AI Models Integrated
+##  AI Models Integrated
 
 | Model | Type | Purpose | Performance |
 |-------|------|---------|-------------|
@@ -62,23 +62,23 @@ Successfully integrated multiple AI models into Threadweaver for maximum judging
 
 ---
 
-## 📊 Performance Metrics
+##  Performance Metrics
 
 **Before (Pure Algorithm):**
 - Latency: 1ms
 - Accuracy: 75%
-- AI Usage: ❌ Minimal
+- AI Usage:  Minimal
 - Cost: $0
 
 **After (Hybrid AI):**
 - Latency: ~250ms
 - Accuracy: ~90%
-- AI Usage: ✅ Excellent
+- AI Usage:  Excellent
 - Cost: $0.00001/decision (~$1/month for 100K decisions)
 
 ---
 
-## 🎯 Judging Criteria Scores
+##  Judging Criteria Scores
 
 | Criteria | Before | After | Improvement |
 |----------|--------|-------|-------------|
@@ -90,20 +90,20 @@ Successfully integrated multiple AI models into Threadweaver for maximum judging
 
 ---
 
-## 🔄 AI Workflow Integration
+##  AI Workflow Integration
 
 ### 6 AI Touchpoints in User Journey:
 
-1. **📄 PDF Upload** → Gemini extracts company info
-2. **🎯 Customization** → Gemini generates 10 custom cards
-3. **🤔 Decision Selection** → Hybrid AI (all 3 models)
-4. **📊 Impact Prediction** → Gemini creates narratives
-5. **🤖 Autopilot** → Gemini simulates optimal path
-6. **📈 Results** → Impact tracker calculates real-world equivalents
+1. ** PDF Upload** → Gemini extracts company info
+2. ** Customization** → Gemini generates 10 custom cards
+3. ** Decision Selection** → Hybrid AI (all 3 models)
+4. ** Impact Prediction** → Gemini creates narratives
+5. ** Autopilot** → Gemini simulates optimal path
+6. ** Results** → Impact tracker calculates real-world equivalents
 
 ---
 
-## 🚀 How to Use
+##  How to Use
 
 ### Test the Hybrid System
 
@@ -164,7 +164,7 @@ Response: {
 
 ---
 
-## 🎨 For Judges: Demo Script
+##  For Judges: Demo Script
 
 ### Show AI in Action:
 
@@ -190,7 +190,7 @@ Response: {
 
 ---
 
-## 📈 Impact on Community
+##  Impact on Community
 
 **Educational Value:**
 - Users learn WHY decisions matter (AI explanations)
@@ -209,31 +209,31 @@ Response: {
 
 ---
 
-## 🔧 Technical Excellence
+##  Technical Excellence
 
 **Clean Code:**
-- ✅ Modular architecture
-- ✅ Singleton pattern
-- ✅ Comprehensive docstrings
-- ✅ Type hints
-- ✅ Error handling
-- ✅ Graceful fallbacks
+-  Modular architecture
+-  Singleton pattern
+-  Comprehensive docstrings
+-  Type hints
+-  Error handling
+-  Graceful fallbacks
 
 **Efficient:**
-- ✅ Lazy loading (ESG-BERT only when needed)
-- ✅ Caching (model loaded once)
-- ✅ Fast baseline (algorithm first)
-- ✅ Async-ready architecture
+-  Lazy loading (ESG-BERT only when needed)
+-  Caching (model loaded once)
+-  Fast baseline (algorithm first)
+-  Async-ready architecture
 
 **Well-Documented:**
-- ✅ 400+ line AI system docs
-- ✅ Code examples
-- ✅ Architecture diagrams
-- ✅ Testing guide
+-  400+ line AI system docs
+-  Code examples
+-  Architecture diagrams
+-  Testing guide
 
 ---
 
-## 🎯 Next Steps for Judges
+##  Next Steps for Judges
 
 1. **Read:** `AI_SYSTEM_DOCUMENTATION.md`
 2. **Test:** Make API requests
@@ -242,7 +242,7 @@ Response: {
 
 ---
 
-## 📞 Quick Stats
+##  Quick Stats
 
 - **Lines of AI code:** ~500 (new + modifications)
 - **AI models:** 3 (Gemini, ESG-BERT, Algorithm)
@@ -255,7 +255,7 @@ Response: {
 
 ---
 
-## ✅ Checklist
+##  Checklist
 
 - [x] Gemini 2.0 Flash integrated
 - [x] ESG-BERT integrated
@@ -270,4 +270,4 @@ Response: {
 
 ---
 
-**🎉 Implementation Complete! Ready to impress judges!**
+** Implementation Complete! Ready to impress judges!**

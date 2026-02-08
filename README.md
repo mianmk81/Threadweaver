@@ -10,7 +10,7 @@
 
 ---
 
-## 🌟 Overview
+##  Overview
 
 Threadweaver is a magic-themed, **AI-driven sustainability simulator** that helps users explore how sustainability decisions compound over time. Built for the UGA Hackathon AI + Sustainability track, it combines three AI technologies to provide intelligent, personalized sustainability guidance.
 
@@ -26,43 +26,43 @@ This is **not** a real-world predictor—it's a counterfactual simulation engine
 
 ---
 
-## 🤖 Hybrid AI System
+##  Hybrid AI System
 
 ### **3-Tier AI Architecture**
 
 Threadweaver uses a unique hybrid approach combining three AI models for maximum accuracy and educational impact:
 
 ```
-┌──────────────────────────────────────────────┐
-│        HYBRID AI DECISION ENGINE              │
-├──────────────────────────────────────────────┤
-│                                               │
-│  Tier 1: Algorithmic Optimization (70%)     │
-│  ├─ Fast rule-based filtering                │
-│  ├─ Urgency scoring                          │
-│  └─ Trigger matching                         │
-│                                               │
-│  Tier 2: Gemini 2.0 Flash (25%)             │
-│  ├─ Contextual reasoning                     │
-│  ├─ Decision validation                      │
-│  └─ Natural language explanations            │
-│                                               │
-│  Tier 3: ESG-BERT (5%)                      │
-│  ├─ Sustainability classification            │
-│  ├─ Category detection (E/S/G)               │
-│  └─ Confidence scoring                       │
-│                                               │
-└──────────────────────────────────────────────┘
+
+        HYBRID AI DECISION ENGINE              
+
+                                               
+  Tier 1: Algorithmic Optimization (70%)     
+   Fast rule-based filtering                
+   Urgency scoring                          
+   Trigger matching                         
+                                               
+  Tier 2: Gemini 2.0 Flash (25%)             
+   Contextual reasoning                     
+   Decision validation                      
+   Natural language explanations            
+                                               
+  Tier 3: ESG-BERT (5%)                      
+   Sustainability classification            
+   Category detection (E/S/G)               
+   Confidence scoring                       
+                                               
+
 ```
 
 ### **AI Integration Points**
 
-1. 📄 **PDF Upload** → Gemini extracts company information
-2. 🎯 **Card Generation** → Gemini creates 10 personalized decision cards
-3. 🤔 **Decision Selection** → Hybrid AI (all 3 models working together)
-4. 📊 **Impact Prediction** → AI-generated business narratives
-5. 🤖 **Autopilot** → Gemini simulates optimal 12-month path
-6. 📈 **Results** → Real-world impact equivalents (trees, CO2, etc.)
+1.  **PDF Upload** → Gemini extracts company information
+2.  **Card Generation** → Gemini creates 10 personalized decision cards
+3.  **Decision Selection** → Hybrid AI (all 3 models working together)
+4.  **Impact Prediction** → AI-generated business narratives
+5.  **Autopilot** → Gemini simulates optimal 12-month path
+6.  **Results** → Real-world impact equivalents (trees, CO2, etc.)
 
 ### **Performance Metrics**
 
@@ -73,20 +73,20 @@ Threadweaver uses a unique hybrid approach combining three AI models for maximum
 | + Gemini | +200ms | $0.00001 | +20% boost |
 | **TOTAL** | ~250ms | $0.00001 | **~90%** |
 
-**Monthly Cost** (1000 users × 10 decisions): **$0.10** 💰
+**Monthly Cost** (1000 users × 10 decisions): **$0.10** 
 
 ---
 
-## 🎯 Key Features
+##  Key Features
 
-### 🤖 AI-Powered Personalization
+###  AI-Powered Personalization
 
 - **Company Setup Wizard**: 3-step onboarding with PDF upload
 - **Gemini AI Card Generation**: Creates decisions tailored to your industry
 - **Context-Aware Recommendations**: AI understands your specific challenges
 - **Custom Initial Metrics**: Starting conditions adjusted to company size/goals
 
-### 📊 Six Sustainability Metrics
+###  Six Sustainability Metrics
 
 - **Waste** (0-100, lower is better)
 - **Emissions** (0-100, lower is better)
@@ -95,7 +95,7 @@ Threadweaver uses a unique hybrid approach combining three AI models for maximum
 - **Community Trust** (0-100, higher is better)
 - **Sustainability Score** (aggregate weighted formula, 0-100)
 
-### 🌍 Real-World Impact Tracking
+###  Real-World Impact Tracking
 
 Convert abstract metrics into tangible equivalents:
 - **CO2 Saved** (kg) → Trees planted equivalent
@@ -111,14 +111,14 @@ Convert abstract metrics into tangible equivalents:
 - **Reweave**: Create branching alternate timelines
 - **Multi-Branch Visualization**: See all timelines on one canvas
 
-### 🎨 Dark Cosmic Theme
+###  Dark Cosmic Theme
 
 - Beautiful gradient backgrounds (Tailwind CSS v4)
 - Gold and emerald accent colors
 - Smooth animations with Framer Motion
 - Fully responsive design (mobile/tablet/desktop)
 
-### ♿ Accessibility
+###  Accessibility
 
 - Full keyboard navigation
 - ARIA labels on all interactive elements
@@ -127,7 +127,7 @@ Convert abstract metrics into tangible equivalents:
 
 ---
 
-## 🚀 Quick Start
+##  Quick Start
 
 ### Prerequisites
 
@@ -194,58 +194,58 @@ Frontend at: http://localhost:3000
 
 ---
 
-## 🏗️ Project Structure
+##  Project Structure
 
 ```
 threadweaver/
-├── app/                          # Next.js App Router
-│   ├── page.tsx                  # Landing page with company setup
-│   ├── loom/page.tsx             # Main Loom interface
-│   ├── globals.css               # Cosmic theme (Tailwind v4)
-│   └── layout.tsx                # Root layout
-│
-├── components/                   # React components
-│   ├── loom/                     # Core visualization
-│   │   ├── LoomCanvas.tsx        # Multi-branch SVG timeline
-│   │   ├── ThreadPanel.tsx       # Timeline management sidebar
-│   │   └── ImpactPanel.tsx       # Real-time metrics dashboard
-│   └── ui/                       # Reusable UI components
-│       ├── CompanySetupModal.tsx # 3-step company wizard
-│       ├── DecisionModal.tsx     # AI-enhanced decision selection
-│       ├── ChronosControls.tsx   # Time travel controls
-│       ├── CompareView.tsx       # Timeline comparison
-│       ├── ErrorBoundary.tsx     # Error handling
-│       └── Toast.tsx             # Notifications
-│
-├── lib/                          # Core logic
-│   ├── types.ts                  # TypeScript + Zod schemas
-│   ├── store/                    # Zustand state management
-│   │   └── useThreadweaverStore.ts
-│   ├── hooks/                    # Custom React hooks
-│   │   └── useKeyboardShortcuts.ts
-│   └── utils/                    # Helper utilities
-│
-├── data/
-│   └── cards.json                # 50 base decision cards
-│
-└── api/                          # FastAPI backend
-    ├── main.py                   # FastAPI app + CORS + routes
-    ├── requirements.txt          # Python dependencies
-    ├── schemas/
-    │   └── models.py             # Pydantic models (match Zod)
-    └── engine/                   # AI Decision Engine
-        ├── __init__.py
-        ├── ai_engine.py          # 🆕 Hybrid AI orchestration
-        ├── impact_tracker.py     # 🆕 Real-world impact calculations
-        ├── cards.py              # Card loading & management
-        ├── scoring.py            # Decision selection algorithm
-        ├── simulate.py           # Autopilot simulation
-        └── gemini.py             # Gemini API integration
+ app/                          # Next.js App Router
+    page.tsx                  # Landing page with company setup
+    loom/page.tsx             # Main Loom interface
+    globals.css               # Cosmic theme (Tailwind v4)
+    layout.tsx                # Root layout
+
+ components/                   # React components
+    loom/                     # Core visualization
+       LoomCanvas.tsx        # Multi-branch SVG timeline
+       ThreadPanel.tsx       # Timeline management sidebar
+       ImpactPanel.tsx       # Real-time metrics dashboard
+    ui/                       # Reusable UI components
+        CompanySetupModal.tsx # 3-step company wizard
+        DecisionModal.tsx     # AI-enhanced decision selection
+        ChronosControls.tsx   # Time travel controls
+        CompareView.tsx       # Timeline comparison
+        ErrorBoundary.tsx     # Error handling
+        Toast.tsx             # Notifications
+
+ lib/                          # Core logic
+    types.ts                  # TypeScript + Zod schemas
+    store/                    # Zustand state management
+       useThreadweaverStore.ts
+    hooks/                    # Custom React hooks
+       useKeyboardShortcuts.ts
+    utils/                    # Helper utilities
+
+ data/
+    cards.json                # 50 base decision cards
+
+ api/                          # FastAPI backend
+     main.py                   # FastAPI app + CORS + routes
+     requirements.txt          # Python dependencies
+     schemas/
+        models.py             # Pydantic models (match Zod)
+     engine/                   # AI Decision Engine
+         __init__.py
+         ai_engine.py          #  Hybrid AI orchestration
+         impact_tracker.py     #  Real-world impact calculations
+         cards.py              # Card loading & management
+         scoring.py            # Decision selection algorithm
+         simulate.py           # Autopilot simulation
+         gemini.py             # Gemini API integration
 ```
 
 ---
 
-## 🎮 Keyboard Shortcuts
+##  Keyboard Shortcuts
 
 | Shortcut | Action |
 |----------|--------|
@@ -258,7 +258,7 @@ threadweaver/
 
 ---
 
-## 🧪 Tech Stack
+##  Tech Stack
 
 ### Frontend
 - **Next.js 16.1** - React framework with App Router
@@ -286,7 +286,7 @@ threadweaver/
 
 ---
 
-## 📚 Documentation
+##  Documentation
 
 - **[AI_SYSTEM_DOCUMENTATION.md](AI_SYSTEM_DOCUMENTATION.md)**: Complete AI architecture, models, and performance metrics
 - **[HYBRID_AI_IMPLEMENTATION.md](HYBRID_AI_IMPLEMENTATION.md)**: Implementation details and usage guide
@@ -296,7 +296,7 @@ threadweaver/
 
 ---
 
-## 🧪 Testing the AI System
+##  Testing the AI System
 
 ### Test Decision Selection with Hybrid AI
 
@@ -356,36 +356,36 @@ curl -X POST http://localhost:8003/api/generate-custom-cards \
 
 ---
 
-## 🎯 Judging Criteria Alignment
+##  Judging Criteria Alignment
 
 Built for the **AI + Sustainability** track at UGA Hackathon.
 
-### AI Usage (9/10) ✅
-- ✅ **3 different AI technologies** (Gemini LLM, ESG-BERT transformer, algorithmic AI)
-- ✅ **State-of-the-art models** (Gemini 2.0 Flash, pre-trained ESG-BERT)
-- ✅ **Smart integration** (each model serves specific purpose)
+### AI Usage (9/10) 
+-  **3 different AI technologies** (Gemini LLM, ESG-BERT transformer, algorithmic AI)
+-  **State-of-the-art models** (Gemini 2.0 Flash, pre-trained ESG-BERT)
+-  **Smart integration** (each model serves specific purpose)
 
-### Workflow with AI (9/10) ✅
-- ✅ **6 integration touchpoints** across user journey
-- ✅ **Seamless UX** (AI runs in background, <300ms latency)
-- ✅ **Educational explanations** (every decision shows AI reasoning)
+### Workflow with AI (9/10) 
+-  **6 integration touchpoints** across user journey
+-  **Seamless UX** (AI runs in background, <300ms latency)
+-  **Educational explanations** (every decision shows AI reasoning)
 
-### Community Impact (9/10) ✅
-- ✅ **Educational value** (users learn why decisions matter)
-- ✅ **Real-world metrics** (tangible equivalents: trees, CO2, water)
-- ✅ **Scalable** (personalized to any company context)
+### Community Impact (9/10) 
+-  **Educational value** (users learn why decisions matter)
+-  **Real-world metrics** (tangible equivalents: trees, CO2, water)
+-  **Scalable** (personalized to any company context)
 
-### Clean Code (9/10) ✅
-- ✅ **Modular architecture** (separate AI engine module)
-- ✅ **Well-documented** (600+ lines of docs, comprehensive docstrings)
-- ✅ **Type-safe** (TypeScript + Zod + Pydantic)
-- ✅ **Error handling** (graceful fallbacks for all AI calls)
+### Clean Code (9/10) 
+-  **Modular architecture** (separate AI engine module)
+-  **Well-documented** (600+ lines of docs, comprehensive docstrings)
+-  **Type-safe** (TypeScript + Zod + Pydantic)
+-  **Error handling** (graceful fallbacks for all AI calls)
 
-**Overall: 36/40 → 90%** 🎉
+**Overall: 36/40 → 90%** 
 
 ---
 
-## 🚢 Deployment
+##  Deployment
 
 ### Frontend (Vercel)
 1. Connect GitHub repository to Vercel
@@ -413,7 +413,7 @@ CORS_ORIGINS=https://your-frontend-url.vercel.app
 
 ---
 
-## 🤝 Contributing
+##  Contributing
 
 We welcome contributions! Please:
 
@@ -425,13 +425,13 @@ We welcome contributions! Please:
 
 ---
 
-## 📄 License
+##  License
 
 MIT License - see [LICENSE](LICENSE) file for details
 
 ---
 
-## 🙏 Acknowledgments
+##  Acknowledgments
 
 - **Google Gemini AI** - LLM capabilities
 - **Hugging Face** - ESG-BERT model
@@ -441,7 +441,7 @@ MIT License - see [LICENSE](LICENSE) file for details
 
 ---
 
-## 📞 Contact & Support
+##  Contact & Support
 
 - **GitHub Issues**: [Report bugs or request features](https://github.com/mianmk81/Threadweaver/issues)
 - **Documentation**: See `/docs` folder for detailed guides
@@ -449,6 +449,6 @@ MIT License - see [LICENSE](LICENSE) file for details
 
 ---
 
-**Made with ✨ and 🤖 for a sustainable future**
+**Made with  and  for a sustainable future**
 
 *Empowering informed sustainability decisions through AI-enhanced simulation*

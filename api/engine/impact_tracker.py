@@ -124,44 +124,44 @@ def generate_impact_narrative(impact: Dict, metrics: Dict) -> str:
 
     # Grade-specific messaging
     grade_messages = {
-        'A+': '🌟 **Outstanding Impact!** You\'re a sustainability champion!',
-        'A': '🌲 **Excellent Work!** Your decisions are making a real difference.',
-        'B': '🌱 **Good Progress!** You\'re on the right track.',
-        'C': '📊 **Solid Start!** Keep building on this foundation.',
-        'D': '🔄 **Room for Growth** - Consider more ambitious sustainability choices.',
-        'F': '⚠️ **Early Stages** - Focus on high-impact decisions next time.'
+        'A+': ' **Outstanding Impact!** You\'re a sustainability champion!',
+        'A': ' **Excellent Work!** Your decisions are making a real difference.',
+        'B': ' **Good Progress!** You\'re on the right track.',
+        'C': ' **Solid Start!** Keep building on this foundation.',
+        'D': ' **Room for Growth** - Consider more ambitious sustainability choices.',
+        'F': ' **Early Stages** - Focus on high-impact decisions next time.'
     }
 
     narrative = f"""## Your Sustainability Impact Report
 
 {grade_messages.get(grade, '')}
 
-### 🌍 Real-World Impact
+###  Real-World Impact
 
 Your {impact['total_decisions']} decisions have achieved:
 
 **Climate Impact:**
-- 💨 **{co2_saved:,.0f} kg CO2** prevented from entering the atmosphere
-- 🌳 Equivalent to planting **{trees:.0f} trees** for one year
-- 🚗 Like taking a car off the road for **{impact['cars_off_road_days']:.0f} days**
+-  **{co2_saved:,.0f} kg CO2** prevented from entering the atmosphere
+-  Equivalent to planting **{trees:.0f} trees** for one year
+-  Like taking a car off the road for **{impact['cars_off_road_days']:.0f} days**
 
 **Waste Reduction:**
-- ♻️ **{waste_kg:,.0f} kg of waste** diverted from landfills
-- 🍶 Equivalent to **{bottles:,.0f} plastic bottles** not produced
-- 💧 Saved approximately **{impact['water_liters_saved']:,.0f} liters** of water
+-  **{waste_kg:,.0f} kg of waste** diverted from landfills
+-  Equivalent to **{bottles:,.0f} plastic bottles** not produced
+-  Saved approximately **{impact['water_liters_saved']:,.0f} liters** of water
 
 **Economic Impact:**
-- 💰 Cost savings: **${impact['cost_savings_usd']:,.0f}** annually
-- 📈 Efficiency improved by **{impact['efficiency_improvement']:.0f} points**
-- 🤝 Community trust increased by **{impact['community_trust_gain']:.0f} points**
+-  Cost savings: **${impact['cost_savings_usd']:,.0f}** annually
+-  Efficiency improved by **{impact['efficiency_improvement']:.0f} points**
+-  Community trust increased by **{impact['community_trust_gain']:.0f} points**
 
-### 🎯 Final Sustainability Score: {metrics.get('sustainabilityScore', 50):.0f}/100
+###  Final Sustainability Score: {metrics.get('sustainabilityScore', 50):.0f}/100
 
 **Overall Grade: {grade}**
 
 ---
 
-*Keep up the great work! Every decision compounds over time.* 🌱
+*Keep up the great work! Every decision compounds over time.* 
 """
 
     return narrative

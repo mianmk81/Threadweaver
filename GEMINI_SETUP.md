@@ -6,11 +6,11 @@ Threadweaver now supports custom decision card generation using Google's Gemini 
 
 ## Features
 
-✅ **Company Profile Wizard**: 3-step onboarding to collect company details
-✅ **AI Card Generation**: Gemini creates 10 custom decision cards based on company profile
-✅ **Custom Initial Metrics**: Starting metrics adjusted based on stated challenges
-✅ **Industry-Specific Scenarios**: Decisions relevant to the user's industry and scale
-✅ **Fallback**: If API fails, system uses default campus dining scenario
+ **Company Profile Wizard**: 3-step onboarding to collect company details
+ **AI Card Generation**: Gemini creates 10 custom decision cards based on company profile
+ **Custom Initial Metrics**: Starting metrics adjusted based on stated challenges
+ **Industry-Specific Scenarios**: Decisions relevant to the user's industry and scale
+ **Fallback**: If API fails, system uses default campus dining scenario
 
 ## Setup Instructions
 
@@ -194,37 +194,37 @@ Google Gemini API has rate limits:
 
 ```
 threadweaver/
-├── api/
-│   ├── .env                         # Your API key (gitignored)
-│   ├── .env.example                 # Template
-│   ├── engine/
-│   │   └── gemini.py                # Gemini integration
-│   ├── schemas/
-│   │   └── models.py                # CompanyProfile models
-│   └── main.py                      # /api/generate-custom-cards endpoint
-├── app/
-│   └── loom/
-│       └── page.tsx                 # Company setup integration
-├── components/
-│   └── ui/
-│       └── CompanySetupModal.tsx    # 3-step wizard
-├── lib/
-│   ├── types.ts                     # CompanyProfile schema
-│   ├── utils/
-│   │   └── api.ts                   # generateCustomCards()
-│   └── store/
-│       └── useThreadweaverStore.ts  # Company profile state
-└── GEMINI_SETUP.md                  # This file
+ api/
+    .env                         # Your API key (gitignored)
+    .env.example                 # Template
+    engine/
+       gemini.py                # Gemini integration
+    schemas/
+       models.py                # CompanyProfile models
+    main.py                      # /api/generate-custom-cards endpoint
+ app/
+    loom/
+        page.tsx                 # Company setup integration
+ components/
+    ui/
+        CompanySetupModal.tsx    # 3-step wizard
+ lib/
+    types.ts                     # CompanyProfile schema
+    utils/
+       api.ts                   # generateCustomCards()
+    store/
+        useThreadweaverStore.ts  # Company profile state
+ GEMINI_SETUP.md                  # This file
 ```
 
 ## Next Steps
 
-1. ✅ Set up Gemini API key
-2. ✅ Test company profile wizard
-3. ✅ Verify custom card generation in console
-4. 🔄 **Future**: Persist custom cards to database
-5. 🔄 **Future**: Use custom cards in decision flow (currently uses default cards)
-6. 🔄 **Future**: Add custom metrics units based on company profile
+1.  Set up Gemini API key
+2.  Test company profile wizard
+3.  Verify custom card generation in console
+4.  **Future**: Persist custom cards to database
+5.  **Future**: Use custom cards in decision flow (currently uses default cards)
+6.  **Future**: Add custom metrics units based on company profile
 
 ## Support
 

@@ -23,17 +23,17 @@ This is **NOT** a real-world predictor—it's a counterfactual simulation engine
 - Users can branch at any node to create alternate futures
 
 **Key Files**:
-- ✅ `lib/types.ts` - Complete type system with Zod schemas (MetricsState, DecisionCard, TimelineThread, SessionState)
-- ✅ `lib/store/useThreadweaverStore.ts` - Zustand state management with LocalStorage persistence
-- ✅ `lib/hooks/useKeyboardShortcuts.ts` - Keyboard navigation (Cmd/Ctrl+K, arrows, etc.)
-- ✅ `data/cards.json` - 22 sustainability decision cards with triggers and multi-option choices
-- ✅ `app/page.tsx` - Landing page with cosmic theme and "Enter the Loom" CTA
-- ✅ `app/loom/page.tsx` - Main Loom interface orchestrating all components
-- ✅ `app/globals.css` - Tailwind v4 CSS with CSS custom properties for cosmic theme
-- ✅ `tailwind.config.ts` - Custom theme config (cosmic colors, animations)
-- ✅ `components/loom/` - LoomCanvas (SVG timeline), ThreadPanel, ImpactPanel
-- ✅ `components/ui/` - DecisionModal, ChronosControls, CompareView, ErrorBoundary, Toast
-- ✅ `api/` - FastAPI backend with decision engine (cards.py, scoring.py, simulate.py)
+-  `lib/types.ts` - Complete type system with Zod schemas (MetricsState, DecisionCard, TimelineThread, SessionState)
+-  `lib/store/useThreadweaverStore.ts` - Zustand state management with LocalStorage persistence
+-  `lib/hooks/useKeyboardShortcuts.ts` - Keyboard navigation (Cmd/Ctrl+K, arrows, etc.)
+-  `data/cards.json` - 22 sustainability decision cards with triggers and multi-option choices
+-  `app/page.tsx` - Landing page with cosmic theme and "Enter the Loom" CTA
+-  `app/loom/page.tsx` - Main Loom interface orchestrating all components
+-  `app/globals.css` - Tailwind v4 CSS with CSS custom properties for cosmic theme
+-  `tailwind.config.ts` - Custom theme config (cosmic colors, animations)
+-  `components/loom/` - LoomCanvas (SVG timeline), ThreadPanel, ImpactPanel
+-  `components/ui/` - DecisionModal, ChronosControls, CompareView, ErrorBoundary, Toast
+-  `api/` - FastAPI backend with decision engine (cards.py, scoring.py, simulate.py)
 
 **State Management Philosophy**:
 - Zustand manages global state (threads, active thread, current step, autopilot mode)
@@ -186,18 +186,18 @@ app/page.tsx (Landing)
   → "Enter the Loom" CTA with cosmic animation
 
 app/loom/page.tsx (Main App)
-  ├─ LoomCanvas (center - 75% width)
-  │   ├─ Multi-branch SVG visualization (all threads on one canvas)
-  │   ├─ Active thread: 100% opacity, others: 30% opacity
-  │   ├─ Branch connectors showing divergence points
-  │   ├─ Pan & zoom controls (drag to pan, scroll to zoom)
-  │   └─ Click any branch to switch active thread
-  ├─ ImpactPanel (right - 25% width)
-  │   ├─ Current Impact (6 metric bars)
-  │   ├─ Business State Card (narrative)
-  │   └─ Oracle's Wisdom
-  └─ ChronosControls (bottom)
-      └─ Jump/Rewind/Autopilot/Time slider
+   LoomCanvas (center - 75% width)
+      Multi-branch SVG visualization (all threads on one canvas)
+      Active thread: 100% opacity, others: 30% opacity
+      Branch connectors showing divergence points
+      Pan & zoom controls (drag to pan, scroll to zoom)
+      Click any branch to switch active thread
+   ImpactPanel (right - 25% width)
+      Current Impact (6 metric bars)
+      Business State Card (narrative)
+      Oracle's Wisdom
+   ChronosControls (bottom)
+       Jump/Rewind/Autopilot/Time slider
 ```
 
 ### Accessibility & Keyboard Shortcuts
@@ -263,16 +263,16 @@ The backend is fully implemented with these endpoints:
 ### Module Structure
 ```
 api/
-├── main.py                    # FastAPI app, CORS, routes
-├── requirements.txt           # fastapi, uvicorn, pydantic, python-multipart
-├── schemas/
-│   ├── __init__.py           # Export all schemas (use relative imports!)
-│   └── models.py             # Pydantic models matching frontend Zod schemas
-└── engine/
-    ├── __init__.py           # Export cards, scoring, simulate
-    ├── cards.py              # Card loading from ../data/cards.json
-    ├── scoring.py            # Decision selection algorithm
-    └── simulate.py           # Autopilot simulation logic
+ main.py                    # FastAPI app, CORS, routes
+ requirements.txt           # fastapi, uvicorn, pydantic, python-multipart
+ schemas/
+    __init__.py           # Export all schemas (use relative imports!)
+    models.py             # Pydantic models matching frontend Zod schemas
+ engine/
+     __init__.py           # Export cards, scoring, simulate
+     cards.py              # Card loading from ../data/cards.json
+     scoring.py            # Decision selection algorithm
+     simulate.py           # Autopilot simulation logic
 ```
 
 ### Import Pattern (CRITICAL)
@@ -323,11 +323,11 @@ NEXT_PUBLIC_API_URL=http://localhost:8001
 **Problem**: `Cannot apply unknown utility class` or `Could not resolve theme function`
 **Solution**: Tailwind v4 removed `@apply` and `theme()` functions. Use vanilla CSS with CSS custom properties:
 ```css
-/* ❌ DON'T (Tailwind v3 syntax) */
+/*  DON'T (Tailwind v3 syntax) */
 .btn { @apply bg-gold text-cosmic-dark; }
 border: 2px solid theme('colors.cosmic.darker');
 
-/* ✅ DO (Tailwind v4 syntax) */
+/*  DO (Tailwind v4 syntax) */
 .btn {
   background-color: var(--color-gold);
   color: var(--color-cosmic-dark);
@@ -339,10 +339,10 @@ border: 2px solid var(--color-cosmic-darker);
 **Problem**: `ModuleNotFoundError: No module named 'api'`
 **Solution**: Use relative imports in `__init__.py` files:
 ```python
-# ✅ Correct
+#  Correct
 from .models import MetricsState
 
-# ❌ Wrong
+#  Wrong
 from api.schemas.models import MetricsState
 ```
 
@@ -393,10 +393,10 @@ python -m uvicorn main:app --port 8003  # No --reload flag
 **Problem**: Trying to `fetch('/data/cards.json')` returns 404 or HTML
 **Solution**: Next.js can't serve files outside `public/`. Use backend API instead:
 ```typescript
-// ❌ Wrong - won't work in Next.js
+//  Wrong - won't work in Next.js
 fetch('/data/cards.json')
 
-// ✅ Correct - use backend endpoint
+//  Correct - use backend endpoint
 const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8003';
 fetch(`${apiUrl}/api/cards/${cardId}`)
 ```

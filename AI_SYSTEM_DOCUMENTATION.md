@@ -1,4 +1,4 @@
-# 🤖 AI System Documentation - Threadweaver
+#  AI System Documentation - Threadweaver
 
 ## Overview
 
@@ -6,34 +6,34 @@ Threadweaver uses a **3-tier hybrid AI system** that combines multiple AI models
 
 ---
 
-## 🏗️ Architecture
+##  Architecture
 
 ```
-┌──────────────────────────────────────────────────────┐
-│           HYBRID AI DECISION ENGINE                   │
-├──────────────────────────────────────────────────────┤
-│                                                       │
-│  Tier 1: Algorithmic Optimization (70% weight)      │
-│  ├─ Fast rule-based filtering                        │
-│  ├─ Urgency scoring                                  │
-│  └─ Trigger matching                                 │
-│                                                       │
-│  Tier 2: Gemini 2.0 Flash LLM (25% weight)          │
-│  ├─ Contextual reasoning                             │
-│  ├─ Decision validation                              │
-│  └─ Natural language explanations                    │
-│                                                       │
-│  Tier 3: ESG-BERT ML Model (5% weight)              │
-│  ├─ Sustainability classification                    │
-│  ├─ Category detection (E/S/G)                       │
-│  └─ Confidence scoring                               │
-│                                                       │
-└──────────────────────────────────────────────────────┘
+
+           HYBRID AI DECISION ENGINE                   
+
+                                                       
+  Tier 1: Algorithmic Optimization (70% weight)      
+   Fast rule-based filtering                        
+   Urgency scoring                                  
+   Trigger matching                                 
+                                                       
+  Tier 2: Gemini 2.0 Flash LLM (25% weight)          
+   Contextual reasoning                             
+   Decision validation                              
+   Natural language explanations                    
+                                                       
+  Tier 3: ESG-BERT ML Model (5% weight)              
+   Sustainability classification                    
+   Category detection (E/S/G)                       
+   Confidence scoring                               
+                                                       
+
 ```
 
 ---
 
-## 🎯 AI Models Used
+##  AI Models Used
 
 ### 1. **Gemini 2.0 Flash** (Google AI)
 **Model ID:** `gemini-2.0-flash-exp`
@@ -102,39 +102,39 @@ classification = ai_engine.classify_sustainability_category(text)
 
 ---
 
-## 🔄 AI Workflow
+##  AI Workflow
 
 ### User Journey with AI Integration
 
 ```
-1. 📄 PDF Upload (Onboarding)
-   └─► Gemini: Extract company information from PDF
+1.  PDF Upload (Onboarding)
+    Gemini: Extract company information from PDF
 
-2. 🎯 Company Customization
-   └─► Gemini Pro: Generate 10 personalized decision cards
+2.  Company Customization
+    Gemini Pro: Generate 10 personalized decision cards
 
-3. 🤔 Decision Selection (Every Step)
-   ├─► Algorithm: Filter 50 cards → Top 10 eligible
-   ├─► Algorithm: Score by urgency → Top 3 candidates
-   ├─► ESG-BERT: Classify sustainability category
-   ├─► Gemini Flash: Validate and rank → Best card
-   └─► Return: Card + AI reasoning
+3.  Decision Selection (Every Step)
+    Algorithm: Filter 50 cards → Top 10 eligible
+    Algorithm: Score by urgency → Top 3 candidates
+    ESG-BERT: Classify sustainability category
+    Gemini Flash: Validate and rank → Best card
+    Return: Card + AI reasoning
 
-4. 📊 Impact Prediction
-   ├─► Algorithm: Calculate metric deltas
-   └─► Gemini: Generate business narrative
+4.  Impact Prediction
+    Algorithm: Calculate metric deltas
+    Gemini: Generate business narrative
 
-5. 🤖 Autopilot Mode
-   └─► Gemini: Simulate all 10 decisions optimally
+5.  Autopilot Mode
+    Gemini: Simulate all 10 decisions optimally
 
-6. 📈 Impact Report
-   ├─► Algorithm: Calculate real-world metrics
-   └─► Gemini: Generate inspiring narrative
+6.  Impact Report
+    Algorithm: Calculate real-world metrics
+    Gemini: Generate inspiring narrative
 ```
 
 ---
 
-## 📊 Performance Metrics
+##  Performance Metrics
 
 | Component | Latency | Cost/Request | Accuracy Boost |
 |-----------|---------|--------------|----------------|
@@ -145,11 +145,11 @@ classification = ai_engine.classify_sustainability_category(text)
 
 **Total monthly cost** (1000 users × 10 decisions):
 - 10,000 decisions × $0.00001 = **$0.10/month**
-- Essentially FREE! ✅
+- Essentially FREE! 
 
 ---
 
-## 🎓 AI Integration Points
+##  AI Integration Points
 
 ### 1. Card Generation (`/api/generate-custom-cards`)
 ```python
@@ -221,7 +221,7 @@ Response: {
 
 ---
 
-## 🧪 Testing the AI System
+##  Testing the AI System
 
 ### Test Decision Selection
 ```bash
@@ -261,24 +261,24 @@ curl -X POST http://localhost:8003/api/generate-decision \
 
 ---
 
-## 📚 Code Structure
+##  Code Structure
 
 ```
 api/
-├── engine/
-│   ├── ai_engine.py          # NEW: Multi-model AI orchestration
-│   ├── impact_tracker.py     # NEW: Real-world impact calculation
-│   ├── scoring.py             # ENHANCED: Hybrid selection
-│   ├── gemini.py              # Card generation
-│   └── simulate.py            # Autopilot
-└── main.py                    # ENHANCED: AI endpoints
+ engine/
+    ai_engine.py          # NEW: Multi-model AI orchestration
+    impact_tracker.py     # NEW: Real-world impact calculation
+    scoring.py             # ENHANCED: Hybrid selection
+    gemini.py              # Card generation
+    simulate.py            # Autopilot
+ main.py                    # ENHANCED: AI endpoints
 ```
 
 ---
 
-## 🎯 Judging Criteria Alignment
+##  Judging Criteria Alignment
 
-### 1. AI Usage ✅ (9/10)
+### 1. AI Usage  (9/10)
 - **3 different AI technologies:**
   - Gemini 2.0 Flash (LLM)
   - ESG-BERT (Transformer ML)
@@ -290,7 +290,7 @@ api/
   - Each model serves specific purpose
   - No redundancy
 
-### 2. Workflow with AI ✅ (9/10)
+### 2. Workflow with AI  (9/10)
 - **6 integration points:**
   - PDF extraction
   - Card generation
@@ -303,7 +303,7 @@ api/
   - Fast response times (<300ms)
   - No user friction
 
-### 3. Community Impact ✅ (9/10)
+### 3. Community Impact  (9/10)
 - **Educational value:**
   - AI explanations teach sustainability
   - Real-world impact metrics
@@ -313,7 +313,7 @@ api/
   - AI personalizes to context
   - Compound effect
 
-### 4. Clean Code ✅ (9/10)
+### 4. Clean Code  (9/10)
 - **Modular architecture:**
   - Separate AI engine module
   - Clean interfaces
@@ -329,7 +329,7 @@ api/
 
 ---
 
-## 🚀 Future Enhancements
+##  Future Enhancements
 
 1. **Reinforcement Learning:**
    - Train agent on user choices
@@ -349,7 +349,7 @@ api/
 
 ---
 
-## 📞 Support
+##  Support
 
 For questions about the AI system:
 - See code: `api/engine/ai_engine.py`
@@ -358,4 +358,4 @@ For questions about the AI system:
 
 ---
 
-**Built with ❤️ and 🤖 for a sustainable future!**
+**Built with  and  for a sustainable future!**
