@@ -1,10 +1,15 @@
 """
 Card scoring and selection algorithm.
 Implements AI decision engine that picks next card based on current state.
+
+Supports both:
+- Pure algorithmic selection (fast, deterministic)
+- Hybrid AI selection (algorithm + ESG-BERT + Gemini)
 """
 from random import Random
 from typing import List, Optional, Tuple
 from .cards import load_all_cards
+from .ai_engine import get_ai_engine
 
 
 def filter_by_triggers(metrics: dict, cards: List[dict]) -> List[dict]:
@@ -248,3 +253,108 @@ def select_card(
     }
 
     return selected["card"], rationale, scoring_details
+
+
+def select_card_with_ai(
+    metrics: dict,
+    used_card_ids: List[str],
+    seed: Optional[int] = None,
+    use_ai: bool = True
+) -> Tuple[Optional[dict], str, dict]:
+    """
+    HYBRID AI SELECTION - Enhanced version with multi-model AI
+
+    Pipeline:
+    1. Algorithm filtering and scoring (fast baseline)
+    2. ESG-BERT classification (ML category detection)
+    3. Gemini validation (LLM contextual reasoning)
+    4. Combined scoring (70% algo + 25% Gemini + 5% ESG-BERT)
+
+    Args:
+        metrics: Current MetricsState as dict
+        used_card_ids: List of card IDs already used
+        seed: Optional random seed
+        use_ai: Enable AI enhancement (if False, falls back to pure algorithm)
+
+    Returns:
+        Tuple of (selected_card, rationale, scoring_details)
+    """
+    # If AI disabled, use pure algorithm
+    if not use_ai:
+        return select_card(metrics, used_card_ids, seed)
+
+    # Create local Random instance
+    rng = Random(seed) if seed is not None else Random()
+
+    # 1. Load and filter cards (same as algorithm)
+    all_cards = load_all_cards()
+    available_cards = [card for card in all_cards if card["id"] not in used_card_ids]
+
+    if not available_cards:
+        print(f"All {len(all_cards)} cards used. Allowing reuse.")
+        available_cards = all_cards
+
+    # 2. Filter by triggers
+    eligible_cards = filter_by_triggers(metrics, available_cards)
+
+    if not eligible_cards:
+        print(f"No cards match triggers. Using {len(available_cards)} available.")
+        eligible_cards = available_cards
+
+    # 3. Algorithm scoring
+    urgency = calculate_urgency_score(metrics)
+    scored_cards = []
+
+    for card in eligible_cards:
+        score, factors = score_card(card, metrics, urgency)
+        scored_cards.append({
+            "card": card,
+            "score": score,
+            "factors": factors
+        })
+
+    # Sort by score
+    scored_cards.sort(key=lambda x: x["score"], reverse=True)
+
+    # 4. Get top 3 candidates for AI analysis
+    top_candidates = scored_cards[:min(3, len(scored_cards))]
+
+    # 5. AI ENHANCEMENT - Use multi-model pipeline
+    try:
+        ai_engine = get_ai_engine()
+
+        # Extract just cards and scores for AI engine
+        top_cards = [c["card"] for c in top_candidates]
+        top_scores = [c["score"] for c in top_candidates]
+
+        # Multi-model hybrid selection
+        selected_card, ai_rationale, ai_scoring_details = ai_engine.enhance_card_selection(
+            top_cards,
+            metrics,
+            top_scores
+        )
+
+        print(f"AI HYBRID: Selected '{selected_card['title']}' with AI confidence {ai_scoring_details.get('geminiConfidence', 0):.0%}")
+
+        return selected_card, ai_rationale, ai_scoring_details
+
+    except Exception as e:
+        # Fallback to algorithm if AI fails
+        print(f"AI enhancement failed, falling back to algorithm: {e}")
+        weights = [c["score"] for c in top_candidates]
+        selected = rng.choices(top_candidates, weights=weights, k=1)[0]
+
+        top_factors = selected["factors"][:3]
+        rationale = "This card was chosen because: " + "; ".join(
+            [f"{f['factor']} ({f['reason']})" for f in top_factors]
+        ) if top_factors else f"This {selected['card']['severity']} decision addresses current needs."
+
+        scoring_details = {
+            "finalScore": selected["score"],
+            "topFactors": top_factors,
+            "candidatesConsidered": len(top_candidates),
+            "totalEligible": len(eligible_cards),
+            "aiEnhanced": False
+        }
+
+        return selected["card"], rationale, scoring_details

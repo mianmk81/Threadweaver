@@ -21,7 +21,7 @@ from schemas.models import (
     GenerateCustomCardsRequest,
     GenerateCustomCardsResponse,
 )
-from engine import cards, scoring, simulate, gemini
+from engine import cards, scoring, simulate, gemini, impact_tracker
 
 
 # Lifespan context manager for startup/shutdown
@@ -103,11 +103,13 @@ async def generate_decision(request: GenerateDecisionRequest):
     # Convert Pydantic models to dicts for engine
     metrics_dict = request.currentMetrics.model_dump(by_alias=True)
 
-    # Select card using scoring algorithm
-    card_dict, rationale, scoring_details = scoring.select_card(
+    # Select card using HYBRID AI SYSTEM (algorithm + ESG-BERT + Gemini)
+    # Set use_ai=True to enable multi-model AI enhancement
+    card_dict, rationale, scoring_details = scoring.select_card_with_ai(
         metrics=metrics_dict,
         used_card_ids=request.usedCardIds,
-        seed=request.seed
+        seed=request.seed,
+        use_ai=True  # Enable AI enhancement
     )
 
     if not card_dict:
@@ -430,6 +432,46 @@ async def extract_pdf(file: UploadFile = File(...)):
         raise HTTPException(
             status_code=500,
             detail=f"Failed to extract PDF content: {str(e)}"
+        )
+
+
+# ==================== Impact Report ====================
+
+@app.post("/api/calculate-impact")
+async def calculate_impact(
+    timeline_nodes: List[dict],
+    final_metrics: MetricsState
+):
+    """
+    Calculate real-world sustainability impact from timeline decisions.
+
+    Args:
+        timeline_nodes: List of decision nodes with deltas
+        final_metrics: Final sustainability metrics
+
+    Returns:
+        Dict with real-world impact metrics and narrative
+    """
+    try:
+        # Calculate impact
+        impact = impact_tracker.calculate_real_world_impact(timeline_nodes)
+
+        # Generate narrative
+        narrative = impact_tracker.generate_impact_narrative(
+            impact,
+            final_metrics.model_dump()
+        )
+
+        return {
+            "impact": impact,
+            "narrative": narrative,
+            "grade": impact['impact_grade']
+        }
+
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to calculate impact: {str(e)}"
         )
 
 
