@@ -7,19 +7,21 @@
 
 import { useState, useEffect } from 'react';
 import { useThreadweaverStore } from '@/lib/store/useThreadweaverStore';
-import { Sparkles, Circle, Maximize2 } from 'lucide-react';
+import { Sparkles, Circle, Maximize2, Trash2 } from 'lucide-react';
 
 export default function LoomCanvas() {
   const [mounted, setMounted] = useState(false);
   const [viewBox, setViewBox] = useState({ x: 0, y: 0, width: 1000, height: 600 });
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  const [hoveredThreadId, setHoveredThreadId] = useState<string | null>(null);
 
   const {
     threads,
     activeThreadId,
     getActiveThread,
     setActiveThread,
+    deleteThread,
     currentStep,
     setShowDecisionModal,
     setShowNodeDetails,
@@ -57,8 +59,8 @@ export default function LoomCanvas() {
   const getThreadYPosition = (threadIndex: number, totalThreads: number) => {
     if (totalThreads === 1) return 50; // Center if only one thread
 
-    const spacing = 60 / Math.max(totalThreads - 1, 1); // Spread across 60% of height
-    return 20 + (threadIndex * spacing); // Start at 20%, spread downward
+    const spacing = 40 / Math.max(totalThreads - 1, 1); // Spread across 40% of height (tighter spacing)
+    return 30 + (threadIndex * spacing); // Start at 30%, spread downward
   };
 
   // Calculate positions for nodes
@@ -73,9 +75,15 @@ export default function LoomCanvas() {
     if (node) {
       // Past or current node - show details
       setShowNodeDetails(true, step);
-    } else if (step > activeThread.nodes.length) {
-      // Future node - open decision modal
-      setShowDecisionModal(true);
+    } else {
+      // Future node - open decision modal (only if timeline not complete)
+      const lastStep = activeThread.nodes.length > 0
+        ? Math.max(...activeThread.nodes.map(n => n.step))
+        : 0;
+
+      if (lastStep < 10) {
+        setShowDecisionModal(true);
+      }
     }
   };
 
@@ -344,14 +352,37 @@ export default function LoomCanvas() {
                 );
               })()}
 
-              {/* Timeline path - only render from startStep onwards */}
-              {hasNodes && visibleNodes.length > 1 && (
+              {/* Timeline path - connect all visible nodes */}
+              {hasNodes && visibleNodes.length >= 1 && (
                 <path
-                  d={`${visibleNodes.map((node, idx) => {
-                    if (!nodePositions[node.step]) return '';
-                    const x = nodePositions[node.step].x * 10;
-                    return idx === 0 ? `M ${x} ${yPos * 6}` : `L ${x} ${yPos * 6}`;
-                  }).join(' ')}`}
+                  d={(() => {
+                    // For branches, start from branch point, then connect to all visible nodes
+                    let pathCommands = [];
+
+                    if (isBranch && thread.branchPoint !== undefined && nodePositions[thread.branchPoint]) {
+                      // Start from branch point
+                      const branchX = nodePositions[thread.branchPoint].x * 10;
+                      pathCommands.push(`M ${branchX} ${yPos * 6}`);
+
+                      // Connect to all visible nodes
+                      visibleNodes.forEach((node) => {
+                        if (nodePositions[node.step]) {
+                          const x = nodePositions[node.step].x * 10;
+                          pathCommands.push(`L ${x} ${yPos * 6}`);
+                        }
+                      });
+                    } else {
+                      // Non-branch: just connect visible nodes
+                      visibleNodes.forEach((node, idx) => {
+                        if (nodePositions[node.step]) {
+                          const x = nodePositions[node.step].x * 10;
+                          pathCommands.push(idx === 0 ? `M ${x} ${yPos * 6}` : `L ${x} ${yPos * 6}`);
+                        }
+                      });
+                    }
+
+                    return pathCommands.join(' ');
+                  })()}
                   fill="none"
                   stroke={threadColor}
                   strokeWidth={isActiveThread ? 4 : 2}
@@ -360,21 +391,67 @@ export default function LoomCanvas() {
                 />
               )}
 
-              {/* Thread label */}
-              <text
-                x="10"
-                y={yPos * 6 - 15}
-                fill={threadColor}
-                fontSize="12"
-                fontWeight="600"
-                style={{ cursor: 'pointer' }}
-                onClick={() => !isActiveThread && setActiveThread(thread.id)}
+              {/* Thread label with delete button */}
+              <g
+                onMouseEnter={() => setHoveredThreadId(thread.id)}
+                onMouseLeave={() => setHoveredThreadId(null)}
               >
-                {thread.label}
-              </text>
+                {/* Invisible hover area to keep button visible when moving mouse */}
+                {isActiveThread && threads.length > 1 && (
+                  <rect
+                    x="5"
+                    y={yPos * 6 - 28}
+                    width={thread.label.length * 7 + 35}
+                    height="20"
+                    fill="transparent"
+                    style={{ cursor: 'pointer' }}
+                  />
+                )}
+
+                <text
+                  x="10"
+                  y={yPos * 6 - 15}
+                  fill={threadColor}
+                  fontSize="12"
+                  fontWeight="600"
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => !isActiveThread && setActiveThread(thread.id)}
+                >
+                  {thread.label}
+                </text>
+
+                {/* Delete button - only show on active thread when hovering */}
+                {hoveredThreadId === thread.id && isActiveThread && threads.length > 1 && (
+                  <g
+                    transform={`translate(${thread.label.length * 7 + 20}, ${yPos * 6 - 22})`}
+                    style={{ cursor: 'pointer' }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (window.confirm(`Delete thread "${thread.label}"?`)) {
+                        deleteThread(thread.id);
+                      }
+                    }}
+                  >
+                    {/* Circle background */}
+                    <circle r="10" fill="rgba(239, 68, 68, 0.8)" stroke="#ef4444" strokeWidth="1" />
+                    {/* X symbol */}
+                    <text
+                      x="0"
+                      y="0"
+                      fill="white"
+                      fontSize="14"
+                      fontWeight="bold"
+                      textAnchor="middle"
+                      dominantBaseline="central"
+                    >
+                      ×
+                    </text>
+                  </g>
+                )}
+              </g>
 
               {/* Decision nodes for this thread - only render visible nodes */}
-              {visibleNodes.map((node) => {
+              {visibleNodes.map((node, nodeIndex) => {
                 const stepIndex = node.step;
                 const pos = nodePositions[stepIndex];
                 if (!pos) return null;
@@ -382,9 +459,12 @@ export default function LoomCanvas() {
                 const isCurrentStep = isActiveThread && stepIndex === currentStep;
                 const isClickable = true;
 
+                // Use node.id if available, otherwise use thread-step-index combination
+                const uniqueKey = node.id || `${thread.id}-step${node.step}-idx${nodeIndex}`;
+
                 return (
                   <g
-                    key={`${thread.id}-${stepIndex}`}
+                    key={uniqueKey}
                     transform={`translate(${pos.x * 10}, ${yPos * 6})`}
                     style={{ cursor: 'pointer' }}
                     onClick={() => {
@@ -396,6 +476,24 @@ export default function LoomCanvas() {
                     onMouseEnter={() => setHoveredNode(node?.cardId || null)}
                     onMouseLeave={() => setHoveredNode(null)}
                   >
+                    {/* Sustainability Score - above node */}
+                    {node.metricsAfter && (
+                      <text
+                        y="-22"
+                        textAnchor="middle"
+                        fill={
+                          node.metricsAfter.sustainabilityScore >= 70 ? '#10B981' :
+                          node.metricsAfter.sustainabilityScore >= 50 ? '#FFD700' :
+                          node.metricsAfter.sustainabilityScore >= 30 ? '#F97316' :
+                          '#EF4444'
+                        }
+                        fontSize="11"
+                        fontWeight="bold"
+                      >
+                        {Math.round(node.metricsAfter.sustainabilityScore)}
+                      </text>
+                    )}
+
                     {/* Node circle */}
                     <circle
                       r={isCurrentStep ? 16 : 12}
@@ -444,23 +542,35 @@ export default function LoomCanvas() {
       </svg>
 
       {/* Action prompt */}
-      {currentStep < 10 && activeThread.nodes.length < 11 ? (
-        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
-          <button
-            onClick={() => setShowDecisionModal(true)}
-            className="btn-primary flex items-center gap-2 shadow-glow-gold animate-pulse"
-          >
-            <Sparkles className="w-4 h-4" />
-            Make Next Decision
-          </button>
-        </div>
-      ) : activeThread.nodes.length >= 11 ? (
-        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-emerald/20 border border-emerald/50 rounded-lg px-4 py-2">
-          <p className="text-sm text-emerald font-semibold">
-            ✨ Timeline Complete! Click any node to review or reweave
-          </p>
-        </div>
-      ) : null}
+      {(() => {
+        // Calculate the highest step number in the current thread
+        const lastStep = activeThread.nodes.length > 0
+          ? Math.max(...activeThread.nodes.map(n => n.step))
+          : 0;
+        const isComplete = lastStep >= 10;
+
+        if (!isComplete) {
+          return (
+            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
+              <button
+                onClick={() => setShowDecisionModal(true)}
+                className="btn-primary flex items-center gap-2 shadow-glow-gold animate-pulse"
+              >
+                <Sparkles className="w-4 h-4" />
+                Make Next Decision
+              </button>
+            </div>
+          );
+        } else {
+          return (
+            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-emerald/20 border border-emerald/50 rounded-lg px-4 py-2">
+              <p className="text-sm text-emerald font-semibold">
+                ✨ Timeline Complete! Click any node to review or reweave
+              </p>
+            </div>
+          );
+        }
+      })()}
     </div>
   );
 }

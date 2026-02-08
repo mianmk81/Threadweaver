@@ -6,6 +6,7 @@ import type {
   TimelineNode,
   MetricsState,
   UIState,
+  CompanyProfile,
 } from '../types';
 import { INITIAL_METRICS } from '../types';
 
@@ -14,13 +15,15 @@ interface ThreadweaverStore extends SessionState {
   uiState: UIState;
 
   // Actions - Session Management
-  createSession: (scenario: string) => void;
+  createSession: (scenario: string, companyProfile?: CompanyProfile) => void;
+  setCompanyProfile: (profile: CompanyProfile) => void;
   loadSession: (sessionId: string) => void;
 
   // Actions - Thread Management
   setActiveThread: (threadId: string) => void;
   createThread: (label: string, color: TimelineThread['color'], parentThreadId?: string, branchPoint?: number) => void;
   deleteThread: (threadId: string) => void;
+  resetAllTimelines: () => void;
 
   // Actions - Node Management
   addNode: (threadId: string, node: TimelineNode) => void;
@@ -91,11 +94,12 @@ export const useThreadweaverStore = create<ThreadweaverStore>()(
       },
 
       // Session Management
-      createSession: (scenario: string) => {
+      createSession: (scenario: string, companyProfile?: CompanyProfile) => {
         const initialThread = createInitialThread();
         set({
           sessionId: generateId(),
           scenario,
+          companyProfile,
           threads: [initialThread],
           activeThreadId: initialThread.id,
           currentStep: 0,
@@ -114,6 +118,13 @@ export const useThreadweaverStore = create<ThreadweaverStore>()(
         });
       },
 
+      setCompanyProfile: (profile: CompanyProfile) => {
+        set((state) => ({
+          companyProfile: profile,
+          updatedAt: Date.now(),
+        }));
+      },
+
       loadSession: (sessionId: string) => {
         // In a real app, this would load from API/DB
         console.log('Loading session:', sessionId);
@@ -125,9 +136,15 @@ export const useThreadweaverStore = create<ThreadweaverStore>()(
           const thread = state.threads.find((t) => t.id === threadId);
           if (!thread) return state;
 
+          // Calculate currentStep based on the highest step number in nodes
+          // This handles branched threads correctly (they may have gaps in step numbers)
+          const lastStep = thread.nodes.length > 0
+            ? Math.max(...thread.nodes.map(n => n.step))
+            : 0;
+
           return {
             activeThreadId: threadId,
-            currentStep: Math.max(0, thread.nodes.length - 1),
+            currentStep: lastStep,
             updatedAt: Date.now(),
           };
         });
@@ -155,10 +172,15 @@ export const useThreadweaverStore = create<ThreadweaverStore>()(
             }
           }
 
+          // Calculate currentStep based on highest step number (handles branches correctly)
+          const lastStep = newThread.nodes.length > 0
+            ? Math.max(...newThread.nodes.map(n => n.step))
+            : 0;
+
           return {
             threads: [...state.threads, newThread],
             activeThreadId: newThread.id,
-            currentStep: Math.max(0, newThread.nodes.length - 1),
+            currentStep: lastStep,
             updatedAt: Date.now(),
           };
         });
@@ -173,25 +195,77 @@ export const useThreadweaverStore = create<ThreadweaverStore>()(
             ? filteredThreads[0]?.id || ''
             : state.activeThreadId;
 
+          // Calculate currentStep for the new active thread
+          let newCurrentStep = state.currentStep;
+          if (state.activeThreadId === threadId && filteredThreads.length > 0) {
+            const newActiveThread = filteredThreads.find(t => t.id === newActiveThreadId);
+            if (newActiveThread) {
+              newCurrentStep = newActiveThread.nodes.length > 0
+                ? Math.max(...newActiveThread.nodes.map(n => n.step))
+                : 0;
+            }
+          }
+
           return {
             threads: filteredThreads,
             activeThreadId: newActiveThreadId,
+            currentStep: newCurrentStep,
             updatedAt: Date.now(),
           };
         });
       },
 
-      // Node Management
-      addNode: (threadId: string, node: TimelineNode) => {
-        set((state) => ({
-          threads: state.threads.map((thread) =>
-            thread.id === threadId
-              ? { ...thread, nodes: [...thread.nodes, node] }
-              : thread
-          ),
-          currentStep: node.step,
+      resetAllTimelines: () => {
+        const initialThread = createInitialThread();
+        set({
+          threads: [initialThread],
+          activeThreadId: initialThread.id,
+          currentStep: 0,
+          autopilotEnabled: false,
           updatedAt: Date.now(),
-        }));
+          uiState: {
+            showDecisionModal: false,
+            showCompareView: false,
+            showNodeDetails: false,
+            selectedNodeStep: null,
+            selectedCompareThreads: [null, null],
+            hoveredNode: null,
+            expandedExplanations: new Set<string>(),
+          },
+        });
+      },
+
+      // Node Management
+      addNode: (threadId: string, node: Partial<TimelineNode> & { step: number; cardId: string; metricsAfter: MetricsState }) => {
+        // Ensure node has required fields
+        const completeNode: TimelineNode = {
+          id: node.id || generateId(),
+          timestamp: node.timestamp || Date.now(),
+          chosenOptionId: node.chosenOptionId || '',
+          explanation: node.explanation || '',
+          businessState: node.businessState || '',
+          ...node,
+        };
+
+        set((state) => {
+          const thread = state.threads.find(t => t.id === threadId);
+
+          // Check if a node with this step already exists in the thread
+          if (thread && thread.nodes.some(n => n.step === completeNode.step)) {
+            console.warn(`Node with step ${completeNode.step} already exists in thread ${threadId}. Skipping duplicate.`);
+            return state;
+          }
+
+          return {
+            threads: state.threads.map((thread) =>
+              thread.id === threadId
+                ? { ...thread, nodes: [...thread.nodes, completeNode] }
+                : thread
+            ),
+            currentStep: completeNode.step,
+            updatedAt: Date.now(),
+          };
+        });
       },
 
       updateNode: (threadId: string, nodeId: string, updates: Partial<TimelineNode>) => {
@@ -321,12 +395,12 @@ export const useThreadweaverStore = create<ThreadweaverStore>()(
         updatedAt: state.updatedAt,
         // Don't persist UI state
       }),
+      onRehydrateStorage: () => (state) => {
+        // Initialize active thread after rehydration completes
+        if (state && !state.activeThreadId && state.threads.length > 0) {
+          state.activeThreadId = state.threads[0].id;
+        }
+      },
     }
   )
 );
-
-// Initialize active thread on first load
-const store = useThreadweaverStore.getState();
-if (!store.activeThreadId && store.threads.length > 0) {
-  useThreadweaverStore.setState({ activeThreadId: store.threads[0].id });
-}

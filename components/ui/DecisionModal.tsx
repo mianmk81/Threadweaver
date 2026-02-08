@@ -29,10 +29,19 @@ export default function DecisionModal() {
 
   const currentMetrics = getCurrentMetrics();
   const activeThread = getActiveThread();
-  const usedCardIds = activeThread?.nodes.map(n => n.cardId) || [];
+  // Filter out the initial node (step 0) when collecting used card IDs
+  const usedCardIds = activeThread?.nodes
+    .filter(n => n.step > 0)
+    .map(n => n.cardId) || [];
 
   // Fetch decision card on mount
   useEffect(() => {
+    // Safety check: don't fetch if timeline is already complete
+    if (currentStep >= 10) {
+      setError('Timeline is complete. No more decisions can be made.');
+      setLoading(false);
+      return;
+    }
     fetchDecisionCard();
   }, []);
 
@@ -47,13 +56,18 @@ export default function DecisionModal() {
         step: currentStep,
       };
 
+      console.log('DecisionModal - Current step:', currentStep);
+      console.log('DecisionModal - Used cards:', usedCardIds.length, usedCardIds);
+      console.log('DecisionModal - Current metrics:', currentMetrics);
       console.log('DecisionModal - Sending request:', requestData);
 
       const response = await generateDecision(requestData);
 
+      console.log('DecisionModal - Received card:', response.card.id, response.card.title);
       setCard(response.card);
     } catch (err) {
-      console.error('DecisionModal - Error:', err);
+      console.error('DecisionModal - ERROR:', err);
+      console.error('DecisionModal - Error message:', err instanceof Error ? err.message : 'Unknown error');
       setError(err instanceof Error ? err.message : 'Failed to load decision');
     } finally {
       setLoading(false);
@@ -67,29 +81,45 @@ export default function DecisionModal() {
   const handleConfirm = async () => {
     if (!card || !selectedOption) return;
 
+    // Safety check: don't create decision beyond step 10
+    if (currentStep >= 10) {
+      setError('Timeline is complete. Cannot add more decisions.');
+      return;
+    }
+
     setApplying(true);
     setError(null);
 
     try {
+      console.log('DecisionModal - Applying decision:', card.id, selectedOption.id);
+      console.log('DecisionModal - Current step before:', currentStep);
+
       const response = await applyDecision({
         currentMetrics,
         cardId: card.id,
         optionId: selectedOption.id,
       });
 
-      // Add node to timeline
-      addNode(activeThreadId, {
+      const newNode = {
         step: currentStep + 1,
         cardId: card.id,
         chosenOptionId: selectedOption.id,
         metricsAfter: response.newMetrics,
         explanation: response.explanation,
         businessState: response.businessState,
-      });
+      };
+
+      console.log('DecisionModal - Adding node:', newNode);
+
+      // Add node to timeline
+      addNode(activeThreadId, newNode);
+
+      console.log('DecisionModal - Node added, new step should be:', currentStep + 1);
 
       // Close modal
       setShowDecisionModal(false);
     } catch (err) {
+      console.error('DecisionModal - Apply error:', err);
       setError(err instanceof Error ? err.message : 'Failed to apply decision');
     } finally {
       setApplying(false);
@@ -205,6 +235,8 @@ export default function DecisionModal() {
               <button
                 key={option.id}
                 onClick={() => handleSelectOption(option)}
+                data-testid={`option-${option.id}`}
+                data-option-id={option.id}
                 className={`
                   w-full text-left p-4 rounded-lg border-2 transition-all duration-200
                   ${selectedOption?.id === option.id

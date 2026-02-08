@@ -415,6 +415,23 @@ BACKEND_CORS_ORIGINS=https://threadweaver.app
 
 ## Key Features Implemented
 
+### Company Customization with Gemini AI
+- **CompanySetupModal**: 3-step wizard for collecting company information
+  - Step 1: Basic info (name, industry, size, location)
+  - Step 2: Current challenges and sustainability goals (multi-select)
+  - Step 3: Optional description
+- **AI Card Generation**: Uses Google Gemini API to generate custom decision cards
+  - Cards tailored to specific industry and company context
+  - Realistic tradeoffs based on company size and stated challenges
+  - 10 custom cards generated per company profile
+- **Custom Initial Metrics**: Starting metrics adjusted based on:
+  - Company size (efficiency bonuses for larger organizations)
+  - Stated challenges (higher waste/emissions if those are issues)
+  - Industry context
+- **Environment Setup**: Requires `GEMINI_API_KEY` in `api/.env`
+- **Fallback Behavior**: If API fails, uses default campus dining scenario
+- **See**: `GEMINI_SETUP.md` for complete setup instructions
+
 ### Multi-Branch Timeline Visualization (LoomCanvas)
 - All timeline threads rendered on single SVG canvas (no sidebar switching)
 - Active thread: 100% opacity, inactive: 30% opacity

@@ -10,10 +10,23 @@ import type {
   ApplyDecisionResponse,
   SimulateAutopilotRequest,
   SimulateAutopilotResponse,
+  GenerateCustomCardsRequest,
+  GenerateCustomCardsResponse,
 } from '../types';
 
 // API base URL (can be configured via environment variable)
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+
+/** Human-readable error when the backend is not reachable */
+function connectionError(url: string, cause: unknown): Error {
+  const message =
+    cause instanceof TypeError && cause.message === 'Failed to fetch'
+      ? `Cannot reach the API at ${url}. Make sure the backend is running (e.g. in a terminal: cd api && python -m uvicorn main:app --reload --port 8003).`
+      : cause instanceof Error
+        ? cause.message
+        : 'Unknown API error occurred';
+  return new Error(message);
+}
 
 /**
  * Generic fetch wrapper with error handling
@@ -45,7 +58,7 @@ async function apiFetch<T>(
         } else if (Array.isArray(errorData.detail)) {
           // Pydantic validation errors
           errorMessage = errorData.detail
-            .map((err: any) => `${err.loc?.join('.') || 'field'}: ${err.msg}`)
+            .map((err: { loc?: string[]; msg?: string }) => `${err.loc?.join('.') || 'field'}: ${err.msg}`)
             .join(', ');
         } else {
           errorMessage = JSON.stringify(errorData.detail);
@@ -57,10 +70,10 @@ async function apiFetch<T>(
 
     return await response.json();
   } catch (error) {
-    if (error instanceof Error) {
+    if (error instanceof Error && error.message.startsWith('API error:')) {
       throw error;
     }
-    throw new Error('Unknown API error occurred');
+    throw connectionError(url, error);
   }
 }
 
@@ -109,6 +122,18 @@ export async function checkHealth(): Promise<{
   cardsLoaded: number;
 }> {
   return apiFetch('/health', { method: 'GET' });
+}
+
+/**
+ * Generate custom decision cards based on company profile using AI
+ */
+export async function generateCustomCards(
+  request: GenerateCustomCardsRequest
+): Promise<GenerateCustomCardsResponse> {
+  return apiFetch<GenerateCustomCardsResponse>('/api/generate-custom-cards', {
+    method: 'POST',
+    body: JSON.stringify(request),
+  });
 }
 
 /**

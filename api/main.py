@@ -17,8 +17,10 @@ from schemas.models import (
     HealthResponse,
     DecisionCard,
     MetricsState,
+    GenerateCustomCardsRequest,
+    GenerateCustomCardsResponse,
 )
-from engine import cards, scoring, simulate
+from engine import cards, scoring, simulate, gemini
 
 
 # Lifespan context manager for startup/shutdown
@@ -50,19 +52,17 @@ app = FastAPI(
 )
 
 
-# CORS configuration
+# CORS configuration: allow localhost and 127.0.0.1 on any port (dev) + production
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "http://localhost:3000",  # Next.js dev server
-        "http://localhost:3001",
-        "http://localhost:3002",
-        "http://localhost:3003",
-        "https://threadweaver.vercel.app",  # Production (when deployed)
+        "https://threadweaver.vercel.app",
     ],
+    allow_origin_regex=r"^http://(localhost|127\.0\.0\.1)(:\d+)?$",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=["*"],
 )
 
 
@@ -264,6 +264,8 @@ async def simulate_autopilot(request: SimulateAutopilotRequest):
         nodes_data = simulate.simulate_full_run(
             initial_metrics=initial_metrics_dict,
             steps=request.steps,
+            start_step=request.startStep,
+            used_card_ids=request.usedCardIds,
             seed=request.seed
         )
     except Exception as e:
@@ -314,6 +316,63 @@ async def get_card(card_id: str):
         raise HTTPException(status_code=404, detail=f"Card not found: {card_id}")
 
     return DecisionCard(**card)
+
+
+# ==================== Custom Card Generation ====================
+
+@app.post("/api/generate-custom-cards", response_model=GenerateCustomCardsResponse)
+async def generate_custom_cards(request: GenerateCustomCardsRequest):
+    """
+    Generate custom decision cards using Gemini AI based on company profile.
+
+    Args:
+        request: Company profile and generation parameters
+
+    Returns:
+        Custom cards and initial metrics tailored to the company
+
+    Raises:
+        HTTPException: If Gemini API fails or returns invalid data
+    """
+    try:
+        profile_dict = request.companyProfile.model_dump()
+
+        # Generate custom cards using Gemini
+        custom_cards = gemini.generate_custom_cards(
+            company_profile=profile_dict,
+            number_of_cards=request.numberOfCards,
+            focus_areas=request.focusAreas
+        )
+
+        if not custom_cards:
+            raise HTTPException(
+                status_code=500,
+                detail="Failed to generate custom cards. Check GEMINI_API_KEY."
+            )
+
+        # Calculate customized initial metrics
+        initial_metrics = gemini.calculate_custom_initial_metrics(profile_dict)
+
+        scaling_context = f"""
+Metrics scaled for {request.companyProfile.size} {request.companyProfile.industry} company.
+Starting conditions adjusted based on stated challenges.
+Company: {request.companyProfile.companyName}
+Operational scale: {request.companyProfile.customMetrics.operationalScale if request.companyProfile.customMetrics else 'Standard'}
+"""
+
+        return GenerateCustomCardsResponse(
+            cards=[DecisionCard(**card) for card in custom_cards],
+            customizedMetrics={
+                "initialMetrics": MetricsState(**initial_metrics),
+                "scalingContext": scaling_context
+            }
+        )
+
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Error generating custom cards: {str(e)}"
+        )
 
 
 # ==================== Root Endpoint ====================

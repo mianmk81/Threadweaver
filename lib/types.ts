@@ -81,11 +81,32 @@ export const TimelineThreadSchema = z.object({
 
 export type TimelineThread = z.infer<typeof TimelineThreadSchema>;
 
+// ==================== Company Profile ====================
+
+export const CompanyProfileSchema = z.object({
+  companyName: z.string(),
+  industry: z.string(),
+  size: z.enum(['small', 'medium', 'large', 'enterprise']), // <50, 50-500, 500-5000, >5000 employees
+  location: z.string().optional(),
+  description: z.string().optional(),
+  currentChallenges: z.array(z.string()).optional(),
+  sustainabilityGoals: z.array(z.string()).optional(),
+  customMetrics: z.object({
+    wasteUnit: z.string().optional(), // e.g., "tons/month", "kg/day"
+    emissionsUnit: z.string().optional(), // e.g., "tons CO2/year"
+    costCurrency: z.string().optional(), // e.g., "USD", "EUR"
+    operationalScale: z.string().optional(), // e.g., "5000 meals/day"
+  }).optional(),
+});
+
+export type CompanyProfile = z.infer<typeof CompanyProfileSchema>;
+
 // ==================== Session State ====================
 
 export const SessionStateSchema = z.object({
   sessionId: z.string(),
   scenario: z.string(),
+  companyProfile: CompanyProfileSchema.optional(),
   threads: z.array(TimelineThreadSchema),
   activeThreadId: z.string(),
   currentStep: z.number().min(0).max(10),
@@ -140,6 +161,8 @@ export type ApplyDecisionResponse = z.infer<typeof ApplyDecisionResponseSchema>;
 export const SimulateAutopilotRequestSchema = z.object({
   initialMetrics: MetricsStateSchema,
   steps: z.number().min(1).max(10),
+  startStep: z.number().min(0).max(10).optional().default(1),
+  usedCardIds: z.array(z.string()).optional().default([]),
   seed: z.number().optional(),
 });
 
@@ -151,6 +174,26 @@ export const SimulateAutopilotResponseSchema = z.object({
 });
 
 export type SimulateAutopilotResponse = z.infer<typeof SimulateAutopilotResponseSchema>;
+
+// ==================== Custom Card Generation ====================
+
+export const GenerateCustomCardsRequestSchema = z.object({
+  companyProfile: CompanyProfileSchema,
+  numberOfCards: z.number().min(5).max(30).default(10),
+  focusAreas: z.array(z.string()).optional(), // e.g., ["waste", "emissions", "cost"]
+});
+
+export type GenerateCustomCardsRequest = z.infer<typeof GenerateCustomCardsRequestSchema>;
+
+export const GenerateCustomCardsResponseSchema = z.object({
+  cards: z.array(DecisionCardSchema),
+  customizedMetrics: z.object({
+    initialMetrics: MetricsStateSchema,
+    scalingContext: z.string(), // Explanation of how metrics are scaled
+  }),
+});
+
+export type GenerateCustomCardsResponse = z.infer<typeof GenerateCustomCardsResponseSchema>;
 
 // ==================== Helper Types ====================
 

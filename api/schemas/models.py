@@ -2,7 +2,7 @@
 Pydantic models matching frontend Zod schemas.
 Ensures type safety between frontend and backend.
 """
-from typing import List, Optional, Literal
+from typing import List, Optional, Literal, Dict, Any
 from pydantic import BaseModel, Field, field_validator
 
 
@@ -106,6 +106,8 @@ class SimulateAutopilotRequest(BaseModel):
     """Request to simulate full autopilot run"""
     initialMetrics: MetricsState
     steps: int = Field(ge=1, le=10)
+    startStep: int = Field(default=1, ge=0, le=10, description="Step number to start from (for branched threads)")
+    usedCardIds: List[str] = Field(default_factory=list, description="Cards already used in this timeline")
     seed: Optional[int] = None
 
 
@@ -131,3 +133,40 @@ class HealthResponse(BaseModel):
     status: str
     version: str
     cardsLoaded: int
+
+
+# ==================== Company Profile Models ====================
+
+class CustomMetrics(BaseModel):
+    """Custom metric units for company"""
+    wasteUnit: Optional[str] = None
+    emissionsUnit: Optional[str] = None
+    costCurrency: Optional[str] = None
+    operationalScale: Optional[str] = None
+
+
+class CompanyProfile(BaseModel):
+    """Company/organization profile for customization"""
+    companyName: str
+    industry: str
+    size: Literal['small', 'medium', 'large', 'enterprise']
+    location: Optional[str] = None
+    description: Optional[str] = None
+    currentChallenges: Optional[List[str]] = None
+    sustainabilityGoals: Optional[List[str]] = None
+    customMetrics: Optional[CustomMetrics] = None
+
+
+class GenerateCustomCardsRequest(BaseModel):
+    """Request to generate custom cards based on company profile"""
+    companyProfile: CompanyProfile
+    numberOfCards: int = Field(default=10, ge=5, le=30)
+    focusAreas: Optional[List[str]] = None
+
+
+class GenerateCustomCardsResponse(BaseModel):
+    """Response with generated custom cards"""
+    cards: List[DecisionCard]
+    customizedMetrics: Dict[str, Any] = Field(
+        description="Initial metrics and scaling context"
+    )

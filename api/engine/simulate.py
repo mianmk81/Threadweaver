@@ -96,7 +96,7 @@ def evaluate_option(option: dict, metrics: dict) -> Tuple[float, str]:
 
     trust_penalty = 0
     if deltas.get("communityTrust", 0) < -5:  # Penalize trust drops
-        trust_penalty = deltas["communityTrust"] * -3
+        trust_penalty = deltas["communityTrust"] * 3
 
     efficiency_bonus = deltas.get("efficiency", 0) * 1.5  # Reward efficiency
 
@@ -192,6 +192,8 @@ def simulate_step(
 def simulate_full_run(
     initial_metrics: dict,
     steps: int,
+    start_step: int = 1,
+    used_card_ids: Optional[List[str]] = None,
     seed: Optional[int] = None
 ) -> List[dict]:
     """
@@ -199,7 +201,9 @@ def simulate_full_run(
 
     Args:
         initial_metrics: Starting MetricsState
-        steps: Number of decision steps (1-10)
+        steps: Number of decision steps to simulate
+        start_step: Step number to start from (for branched threads, e.g., 5)
+        used_card_ids: Cards already used in this timeline (to avoid repeats)
         seed: Optional random seed for deterministic card selection
 
     Returns:
@@ -207,9 +211,10 @@ def simulate_full_run(
     """
     nodes = []
     current_metrics = deepcopy(initial_metrics)
-    used_card_ids = []
+    used_card_ids = used_card_ids.copy() if used_card_ids else []
 
-    for step in range(1, steps + 1):
+    for i in range(steps):
+        step = start_step + i
         # Select next card
         card, rationale, scoring_details = select_card(
             current_metrics,

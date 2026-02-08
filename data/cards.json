@@ -1045,6 +1045,1271 @@
           "explanation": "Prove sustainability at current scale before growing."
         }
       ]
+    },
+    {
+      "id": "student-partnership",
+      "title": "Student Sustainability Partnership",
+      "prompt": "Students want to collaborate on sustainability initiatives. How involved should they be?",
+      "tags": ["trust", "efficiency"],
+      "severity": "easy",
+      "triggers": {
+        "trust_max": 70
+      },
+      "options": [
+        {
+          "id": "student-interns",
+          "label": "Hire student interns to lead sustainability projects",
+          "description": "Paid positions with real responsibility",
+          "deltas": {
+            "waste": -6,
+            "emissions": -4,
+            "cost": 8,
+            "efficiency": 8,
+            "communityTrust": 15
+          },
+          "explanation": "Student leadership brings fresh ideas and builds campus engagement."
+        },
+        {
+          "id": "volunteer-program",
+          "label": "Create volunteer program for interested students",
+          "description": "Unpaid but flexible involvement",
+          "deltas": {
+            "waste": -3,
+            "emissions": -2,
+            "cost": 2,
+            "efficiency": 4,
+            "communityTrust": 8
+          },
+          "explanation": "Volunteer model provides access without major budget impact."
+        }
+      ]
+    },
+    {
+      "id": "food-waste-tracking",
+      "title": "AI-Powered Food Waste Tracking",
+      "prompt": "Smart scale technology can automatically track and categorize waste. Worth the investment?",
+      "tags": ["waste", "efficiency", "cost"],
+      "severity": "medium",
+      "triggers": {
+        "waste_min": 45,
+        "efficiency_max": 70
+      },
+      "options": [
+        {
+          "id": "full-ai-system",
+          "label": "Deploy AI waste tracking across all stations",
+          "description": "Computer vision + smart scales at every waste point",
+          "deltas": {
+            "waste": -10,
+            "emissions": -3,
+            "cost": 20,
+            "efficiency": 15,
+            "communityTrust": 8
+          },
+          "explanation": "Automated tracking provides granular data to optimize ordering and prep."
+        },
+        {
+          "id": "pilot-system",
+          "label": "Pilot AI system at main production kitchen",
+          "description": "Test at one location before full rollout",
+          "deltas": {
+            "waste": -5,
+            "emissions": -1,
+            "cost": 8,
+            "efficiency": 8,
+            "communityTrust": 4
+          },
+          "explanation": "Lower-risk pilot proves value before major investment."
+        },
+        {
+          "id": "manual-tracking",
+          "label": "Stick with manual tracking and staff training",
+          "description": "Human observation and logging",
+          "deltas": {
+            "waste": -3,
+            "emissions": 0,
+            "cost": 2,
+            "efficiency": 3,
+            "communityTrust": 2
+          },
+          "explanation": "No tech investment but requires ongoing staff effort."
+        }
+      ]
+    },
+    {
+      "id": "local-food-cooperative",
+      "title": "Regional Food Cooperative Formation",
+      "prompt": "Partner with other institutions to form a local food purchasing cooperative.",
+      "tags": ["emissions", "cost", "trust"],
+      "severity": "hard",
+      "triggers": {
+        "emissions_min": 50
+      },
+      "options": [
+        {
+          "id": "founding-member",
+          "label": "Be a founding member and invest heavily",
+          "description": "Leadership role, higher costs, maximum benefits",
+          "deltas": {
+            "waste": -8,
+            "emissions": -20,
+            "cost": 18,
+            "efficiency": 5,
+            "communityTrust": 20
+          },
+          "explanation": "Cooperative leadership builds regional sustainable food system."
+        },
+        {
+          "id": "standard-member",
+          "label": "Join as standard member with modest investment",
+          "description": "Participate but don't lead",
+          "deltas": {
+            "waste": -5,
+            "emissions": -12,
+            "cost": 10,
+            "efficiency": 3,
+            "communityTrust": 12
+          },
+          "explanation": "Access cooperative benefits with lower commitment."
+        },
+        {
+          "id": "wait-and-see",
+          "label": "Monitor cooperative's progress before joining",
+          "description": "Let others prove the model",
+          "deltas": {
+            "waste": 0,
+            "emissions": -2,
+            "cost": 0,
+            "efficiency": 0,
+            "communityTrust": -3
+          },
+          "explanation": "Risk-averse approach but miss early-mover advantages."
+        }
+      ]
+    },
+    {
+      "id": "employee-benefits",
+      "title": "Sustainability-Focused Employee Benefits",
+      "prompt": "Offer benefits that support employees' personal sustainability goals.",
+      "tags": ["trust", "cost"],
+      "severity": "easy",
+      "triggers": {
+        "trust_max": 65
+      },
+      "options": [
+        {
+          "id": "comprehensive-package",
+          "label": "Bike commute stipend + local food discounts + education credits",
+          "description": "Full suite of green benefits",
+          "deltas": {
+            "waste": -2,
+            "emissions": -6,
+            "cost": 12,
+            "efficiency": 4,
+            "communityTrust": 18
+          },
+          "explanation": "Comprehensive benefits support employees' values and retention."
+        },
+        {
+          "id": "basic-package",
+          "label": "Transit pass subsidies only",
+          "description": "Focus on commute emissions",
+          "deltas": {
+            "waste": 0,
+            "emissions": -4,
+            "cost": 5,
+            "efficiency": 2,
+            "communityTrust": 8
+          },
+          "explanation": "Targeted benefit addresses major emissions source."
+        }
+      ]
+    },
+    {
+      "id": "demand-forecasting",
+      "title": "Predictive Demand Forecasting System",
+      "prompt": "Use historical data and AI to predict daily demand and reduce overproduction.",
+      "tags": ["waste", "efficiency", "cost"],
+      "severity": "medium",
+      "triggers": {
+        "waste_min": 50,
+        "efficiency_max": 65
+      },
+      "options": [
+        {
+          "id": "ml-forecasting",
+          "label": "Machine learning forecasting with weather/event data",
+          "description": "Advanced AI considering multiple variables",
+          "deltas": {
+            "waste": -15,
+            "emissions": -5,
+            "cost": 15,
+            "efficiency": 18,
+            "communityTrust": 6
+          },
+          "explanation": "Accurate forecasting prevents overproduction and waste."
+        },
+        {
+          "id": "simple-analytics",
+          "label": "Spreadsheet-based historical analysis",
+          "description": "Manual trend analysis from past data",
+          "deltas": {
+            "waste": -8,
+            "emissions": -3,
+            "cost": 2,
+            "efficiency": 8,
+            "communityTrust": 2
+          },
+          "explanation": "Low-tech approach provides basic optimization."
+        }
+      ]
+    },
+    {
+      "id": "zero-waste-event",
+      "title": "Zero-Waste Campus Event Catering",
+      "prompt": "A major campus event wants zero-waste catering. Can you deliver?",
+      "tags": ["waste", "trust"],
+      "severity": "hard",
+      "triggers": {
+        "waste_min": 40
+      },
+      "options": [
+        {
+          "id": "full-zero-waste",
+          "label": "Commit to certified zero-waste event",
+          "description": "Reusable everything, composting station, waste audit",
+          "deltas": {
+            "waste": -20,
+            "emissions": -8,
+            "cost": 22,
+            "efficiency": -8,
+            "communityTrust": 25
+          },
+          "explanation": "Showcase event demonstrates capabilities but requires massive effort."
+        },
+        {
+          "id": "low-waste",
+          "label": "Low-waste event with some compromises",
+          "description": "Minimize waste but allow some single-use items",
+          "deltas": {
+            "waste": -10,
+            "emissions": -4,
+            "cost": 10,
+            "efficiency": -3,
+            "communityTrust": 12
+          },
+          "explanation": "Practical approach balances impact with operational feasibility."
+        },
+        {
+          "id": "decline",
+          "label": "Decline event, not ready for zero-waste standard",
+          "description": "Focus on improving baseline operations first",
+          "deltas": {
+            "waste": 0,
+            "emissions": 0,
+            "cost": 0,
+            "efficiency": 2,
+            "communityTrust": -8
+          },
+          "explanation": "Honest assessment avoids overpromising but misses visibility opportunity."
+        }
+      ]
+    },
+    {
+      "id": "urban-farm",
+      "title": "On-Campus Urban Farm Development",
+      "prompt": "Convert unused campus land into food production. How ambitious should this be?",
+      "tags": ["emissions", "waste", "trust"],
+      "severity": "hard",
+      "triggers": {
+        "emissions_min": 45
+      },
+      "options": [
+        {
+          "id": "large-farm",
+          "label": "2-acre production farm with greenhouse",
+          "description": "Supply 30% of produce needs",
+          "deltas": {
+            "waste": -10,
+            "emissions": -18,
+            "cost": 30,
+            "efficiency": -5,
+            "communityTrust": 25
+          },
+          "explanation": "Major farm provides significant local sourcing and educational value."
+        },
+        {
+          "id": "teaching-garden",
+          "label": "Quarter-acre teaching garden",
+          "description": "Educational focus with modest production",
+          "deltas": {
+            "waste": -4,
+            "emissions": -6,
+            "cost": 12,
+            "efficiency": 0,
+            "communityTrust": 15
+          },
+          "explanation": "Garden prioritizes learning and community engagement."
+        },
+        {
+          "id": "herb-garden",
+          "label": "Rooftop herb and microgreens garden",
+          "description": "Small-scale specialty production",
+          "deltas": {
+            "waste": -2,
+            "emissions": -3,
+            "cost": 5,
+            "efficiency": 2,
+            "communityTrust": 8
+          },
+          "explanation": "Manageable project adds fresh elements to menu."
+        }
+      ]
+    },
+    {
+      "id": "smart-refrigeration",
+      "title": "IoT-Enabled Refrigeration Monitoring",
+      "prompt": "Smart sensors can optimize refrigeration and prevent food spoilage. Invest in IoT?",
+      "tags": ["waste", "efficiency", "emissions"],
+      "severity": "medium",
+      "triggers": {
+        "waste_min": 40,
+        "efficiency_max": 60
+      },
+      "options": [
+        {
+          "id": "full-iot",
+          "label": "Comprehensive IoT system with predictive maintenance",
+          "description": "Temperature monitoring, alerts, and AI optimization",
+          "deltas": {
+            "waste": -12,
+            "emissions": -10,
+            "cost": 18,
+            "efficiency": 15,
+            "communityTrust": 6
+          },
+          "explanation": "Smart system prevents spoilage and optimizes energy use."
+        },
+        {
+          "id": "basic-sensors",
+          "label": "Basic temperature sensors with manual alerts",
+          "description": "Monitoring without automation",
+          "deltas": {
+            "waste": -6,
+            "emissions": -4,
+            "cost": 6,
+            "efficiency": 8,
+            "communityTrust": 2
+          },
+          "explanation": "Affordable monitoring improves oversight without full automation."
+        }
+      ]
+    },
+    {
+      "id": "upcycled-ingredients",
+      "title": "Upcycled Ingredient Sourcing",
+      "prompt": "Use ingredients that would otherwise be wasted (imperfect produce, brewing byproducts).",
+      "tags": ["waste", "cost"],
+      "severity": "easy",
+      "triggers": {
+        "waste_min": 45
+      },
+      "options": [
+        {
+          "id": "full-upcycled",
+          "label": "Dedicate 25% of menu to upcycled ingredients",
+          "description": "Showcase rescued and repurposed foods",
+          "deltas": {
+            "waste": -15,
+            "emissions": -6,
+            "cost": -8,
+            "efficiency": 4,
+            "communityTrust": 18
+          },
+          "explanation": "Upcycled ingredients reduce system-wide waste and costs."
+        },
+        {
+          "id": "occasional-use",
+          "label": "Use upcycled ingredients when available and appropriate",
+          "description": "Opportunistic incorporation",
+          "deltas": {
+            "waste": -6,
+            "emissions": -2,
+            "cost": -3,
+            "efficiency": 2,
+            "communityTrust": 8
+          },
+          "explanation": "Flexible approach takes advantage of opportunities."
+        }
+      ]
+    },
+    {
+      "id": "regenerative-sourcing",
+      "title": "Regenerative Agriculture Commitment",
+      "prompt": "Source from farms practicing regenerative agriculture that improves soil health.",
+      "tags": ["emissions", "cost", "trust"],
+      "severity": "hard",
+      "triggers": {
+        "emissions_min": 50
+      },
+      "options": [
+        {
+          "id": "full-regenerative",
+          "label": "Require regenerative certification for all produce",
+          "description": "100% sourcing from regenerative farms",
+          "deltas": {
+            "waste": -4,
+            "emissions": -22,
+            "cost": 20,
+            "efficiency": -2,
+            "communityTrust": 22
+          },
+          "explanation": "Regenerative agriculture sequesters carbon and improves ecosystems."
+        },
+        {
+          "id": "transition-support",
+          "label": "Partner with farms transitioning to regenerative practices",
+          "description": "Support suppliers on the journey",
+          "deltas": {
+            "waste": -2,
+            "emissions": -12,
+            "cost": 12,
+            "efficiency": 0,
+            "communityTrust": 16
+          },
+          "explanation": "Help farms transition while building long-term partnerships."
+        },
+        {
+          "id": "pilot-items",
+          "label": "Start with regenerative sourcing for select high-volume items",
+          "description": "Grains and legumes first",
+          "deltas": {
+            "waste": -1,
+            "emissions": -6,
+            "cost": 6,
+            "efficiency": 1,
+            "communityTrust": 8
+          },
+          "explanation": "Focused approach proves concept before full commitment."
+        }
+      ]
+    },
+    {
+      "id": "living-wage",
+      "title": "Living Wage Commitment",
+      "prompt": "Commit to paying all workers a living wage. Impact on sustainability?",
+      "tags": ["trust", "cost"],
+      "severity": "medium",
+      "triggers": {
+        "trust_max": 60
+      },
+      "options": [
+        {
+          "id": "immediate-living-wage",
+          "label": "Raise all wages to living wage immediately",
+          "description": "Full commitment effective next month",
+          "deltas": {
+            "waste": 0,
+            "emissions": 0,
+            "cost": 18,
+            "efficiency": 8,
+            "communityTrust": 25
+          },
+          "explanation": "Living wage reduces turnover and shows commitment to social sustainability."
+        },
+        {
+          "id": "phased-raise",
+          "label": "Phase in living wage over 18 months",
+          "description": "Gradual implementation",
+          "deltas": {
+            "waste": 0,
+            "emissions": 0,
+            "cost": 12,
+            "efficiency": 5,
+            "communityTrust": 15
+          },
+          "explanation": "Slower path to same goal manages budget impact."
+        },
+        {
+          "id": "above-minimum",
+          "label": "Raise wages above minimum but not to full living wage",
+          "description": "Competitive but not transformational",
+          "deltas": {
+            "waste": 0,
+            "emissions": 0,
+            "cost": 6,
+            "efficiency": 3,
+            "communityTrust": 8
+          },
+          "explanation": "Incremental improvement without major cost increase."
+        }
+      ]
+    },
+    {
+      "id": "circular-dishware",
+      "title": "Circular Economy Dishware Program",
+      "prompt": "Replace dishes with durable, infinitely recyclable materials. Worth the switch?",
+      "tags": ["waste", "cost", "efficiency"],
+      "severity": "medium",
+      "triggers": {
+        "waste_min": 50
+      },
+      "options": [
+        {
+          "id": "glass-steel",
+          "label": "Switch to glass and stainless steel dishware",
+          "description": "Fully circular materials with take-back program",
+          "deltas": {
+            "waste": -18,
+            "emissions": -6,
+            "cost": 22,
+            "efficiency": -4,
+            "communityTrust": 16
+          },
+          "explanation": "Durable materials eliminate waste from broken dishware."
+        },
+        {
+          "id": "bamboo-fiber",
+          "label": "Upgrade to bamboo fiber composite dishware",
+          "description": "Biodegradable and durable",
+          "deltas": {
+            "waste": -10,
+            "emissions": -3,
+            "cost": 12,
+            "efficiency": 0,
+            "communityTrust": 10
+          },
+          "explanation": "Natural materials reduce environmental impact moderately."
+        }
+      ]
+    },
+    {
+      "id": "food-rescue-tech",
+      "title": "Food Rescue Technology Platform",
+      "prompt": "Develop app connecting surplus food with community members in real-time.",
+      "tags": ["waste", "trust", "cost"],
+      "severity": "medium",
+      "triggers": {
+        "waste_min": 45
+      },
+      "options": [
+        {
+          "id": "custom-app",
+          "label": "Build custom app with real-time inventory",
+          "description": "Professional development and maintenance",
+          "deltas": {
+            "waste": -18,
+            "emissions": -4,
+            "cost": 15,
+            "efficiency": 6,
+            "communityTrust": 20
+          },
+          "explanation": "Custom solution optimized for your specific operations."
+        },
+        {
+          "id": "existing-platform",
+          "label": "Partner with existing food rescue platform",
+          "description": "Use established service like Too Good To Go",
+          "deltas": {
+            "waste": -12,
+            "emissions": -3,
+            "cost": 5,
+            "efficiency": 4,
+            "communityTrust": 12
+          },
+          "explanation": "Proven platform with existing user base."
+        },
+        {
+          "id": "social-media",
+          "label": "Post surplus availability on social media",
+          "description": "No-tech solution using existing channels",
+          "deltas": {
+            "waste": -6,
+            "emissions": -1,
+            "cost": 1,
+            "efficiency": 2,
+            "communityTrust": 6
+          },
+          "explanation": "Free approach with limited reach and convenience."
+        }
+      ]
+    },
+    {
+      "id": "compost-distribution",
+      "title": "Community Compost Distribution",
+      "prompt": "Finished compost from your program could benefit community gardens. Share it?",
+      "tags": ["waste", "trust"],
+      "severity": "easy",
+      "triggers": {
+        "waste_max": 50
+      },
+      "options": [
+        {
+          "id": "free-distribution",
+          "label": "Free compost distribution program for community",
+          "description": "Pickup days and delivery to local gardens",
+          "deltas": {
+            "waste": -8,
+            "emissions": -2,
+            "cost": 6,
+            "efficiency": -2,
+            "communityTrust": 20
+          },
+          "explanation": "Community benefit from your sustainability efforts."
+        },
+        {
+          "id": "nominal-fee",
+          "label": "Sell compost at nominal fee to cover handling",
+          "description": "Cost-recovery model",
+          "deltas": {
+            "waste": -6,
+            "emissions": -1,
+            "cost": 2,
+            "efficiency": 0,
+            "communityTrust": 12
+          },
+          "explanation": "Self-sustaining program with broad community access."
+        }
+      ]
+    },
+    {
+      "id": "seasonal-closure",
+      "title": "Seasonal Operations Schedule",
+      "prompt": "Reduce operations during low-demand periods to save energy and resources?",
+      "tags": ["emissions", "cost", "efficiency"],
+      "severity": "medium",
+      "triggers": {
+        "efficiency_max": 65
+      },
+      "options": [
+        {
+          "id": "summer-closure",
+          "label": "Close 2 of 3 dining halls during summer",
+          "description": "Concentrate operations when demand is low",
+          "deltas": {
+            "waste": -8,
+            "emissions": -15,
+            "cost": -12,
+            "efficiency": 12,
+            "communityTrust": -5
+          },
+          "explanation": "Seasonal consolidation maximizes efficiency during slow periods."
+        },
+        {
+          "id": "reduced-hours",
+          "label": "Reduce hours during breaks, keep all locations open",
+          "description": "Maintain access with shorter service windows",
+          "deltas": {
+            "waste": -4,
+            "emissions": -8,
+            "cost": -6,
+            "efficiency": 6,
+            "communityTrust": 2
+          },
+          "explanation": "Balanced approach maintains convenience while cutting waste."
+        },
+        {
+          "id": "year-round",
+          "label": "Maintain consistent year-round operations",
+          "description": "Prioritize reliable service over efficiency",
+          "deltas": {
+            "waste": 0,
+            "emissions": 0,
+            "cost": 0,
+            "efficiency": 0,
+            "communityTrust": 8
+          },
+          "explanation": "Consistency valued over seasonal optimization."
+        }
+      ]
+    },
+    {
+      "id": "blockchain-traceability",
+      "title": "Blockchain Food Traceability",
+      "prompt": "Use blockchain to provide transparent supply chain tracking. Novel but expensive.",
+      "tags": ["trust", "cost", "efficiency"],
+      "severity": "hard",
+      "triggers": {
+        "trust_max": 70,
+        "efficiency_min": 60
+      },
+      "options": [
+        {
+          "id": "full-blockchain",
+          "label": "Implement end-to-end blockchain traceability",
+          "description": "Every ingredient tracked from farm to plate",
+          "deltas": {
+            "waste": -2,
+            "emissions": -3,
+            "cost": 25,
+            "efficiency": -5,
+            "communityTrust": 22
+          },
+          "explanation": "Ultimate transparency but requires supplier coordination and investment."
+        },
+        {
+          "id": "qr-codes",
+          "label": "QR code system linking to supplier information",
+          "description": "Low-tech transparency without blockchain",
+          "deltas": {
+            "waste": -1,
+            "emissions": -1,
+            "cost": 5,
+            "efficiency": 0,
+            "communityTrust": 12
+          },
+          "explanation": "Practical transparency solution without bleeding-edge tech."
+        },
+        {
+          "id": "supplier-profiles",
+          "label": "Publish supplier profiles on website",
+          "description": "Static information about sourcing partners",
+          "deltas": {
+            "waste": 0,
+            "emissions": 0,
+            "cost": 2,
+            "efficiency": 1,
+            "communityTrust": 6
+          },
+          "explanation": "Basic transparency with minimal investment."
+        }
+      ]
+    },
+    {
+      "id": "biodiversity-initiative",
+      "title": "Campus Biodiversity Enhancement",
+      "prompt": "Replace ornamental landscaping with native pollinator gardens and food forests.",
+      "tags": ["emissions", "trust"],
+      "severity": "medium",
+      "triggers": {
+        "emissions_min": 40
+      },
+      "options": [
+        {
+          "id": "food-forest",
+          "label": "Create perennial food forest on campus",
+          "description": "Edible landscaping with ecological benefits",
+          "deltas": {
+            "waste": -6,
+            "emissions": -12,
+            "cost": 18,
+            "efficiency": -3,
+            "communityTrust": 18
+          },
+          "explanation": "Food forest provides habitat, carbon sequestration, and ingredients."
+        },
+        {
+          "id": "pollinator-garden",
+          "label": "Convert high-visibility areas to native pollinator gardens",
+          "description": "Support ecosystem health",
+          "deltas": {
+            "waste": -2,
+            "emissions": -6,
+            "cost": 8,
+            "efficiency": 0,
+            "communityTrust": 12
+          },
+          "explanation": "Native plants require less maintenance and support biodiversity."
+        }
+      ]
+    },
+    {
+      "id": "peer-benchmarking",
+      "title": "Sustainability Benchmarking Network",
+      "prompt": "Join consortium of universities sharing sustainability metrics and best practices.",
+      "tags": ["efficiency", "trust"],
+      "severity": "easy",
+      "triggers": {
+        "efficiency_max": 70
+      },
+      "options": [
+        {
+          "id": "join-consortium",
+          "label": "Join benchmarking consortium with data sharing",
+          "description": "Annual membership and quarterly reporting",
+          "deltas": {
+            "waste": -5,
+            "emissions": -4,
+            "cost": 6,
+            "efficiency": 10,
+            "communityTrust": 10
+          },
+          "explanation": "Peer comparison drives continuous improvement."
+        },
+        {
+          "id": "informal-network",
+          "label": "Create informal network with peer institutions",
+          "description": "Voluntary sharing without formal structure",
+          "deltas": {
+            "waste": -2,
+            "emissions": -2,
+            "cost": 2,
+            "efficiency": 5,
+            "communityTrust": 5
+          },
+          "explanation": "Collaborative learning without membership fees."
+        }
+      ]
+    },
+    {
+      "id": "climate-resilience",
+      "title": "Climate Resilience Planning",
+      "prompt": "Prepare for climate impacts on supply chain. How proactive should you be?",
+      "tags": ["cost", "efficiency"],
+      "severity": "hard",
+      "triggers": {
+        "efficiency_min": 65
+      },
+      "options": [
+        {
+          "id": "comprehensive-plan",
+          "label": "Develop comprehensive climate adaptation plan",
+          "description": "Scenario planning and supply diversification",
+          "deltas": {
+            "waste": -6,
+            "emissions": -8,
+            "cost": 20,
+            "efficiency": 12,
+            "communityTrust": 15
+          },
+          "explanation": "Proactive planning reduces vulnerability to climate disruptions."
+        },
+        {
+          "id": "supplier-diversity",
+          "label": "Diversify suppliers across climate zones",
+          "description": "Geographic redundancy",
+          "deltas": {
+            "waste": -3,
+            "emissions": 2,
+            "cost": 10,
+            "efficiency": 8,
+            "communityTrust": 8
+          },
+          "explanation": "Multiple sourcing regions ensure continuity during climate events."
+        },
+        {
+          "id": "reactive",
+          "label": "Respond to disruptions as they occur",
+          "description": "No advance planning",
+          "deltas": {
+            "waste": 0,
+            "emissions": 0,
+            "cost": 0,
+            "efficiency": -3,
+            "communityTrust": -5
+          },
+          "explanation": "Reactive approach saves planning costs but increases vulnerability."
+        }
+      ]
+    },
+    {
+      "id": "food-literacy",
+      "title": "Food Systems Education Program",
+      "prompt": "Teach diners about sustainable food systems. How much educational content?",
+      "tags": ["trust", "efficiency"],
+      "severity": "easy",
+      "triggers": {
+        "trust_max": 65
+      },
+      "options": [
+        {
+          "id": "full-program",
+          "label": "Weekly workshops and cooking classes",
+          "description": "Dedicated educational programming",
+          "deltas": {
+            "waste": -4,
+            "emissions": -3,
+            "cost": 10,
+            "efficiency": 5,
+            "communityTrust": 18
+          },
+          "explanation": "Education builds lasting behavior change and engagement."
+        },
+        {
+          "id": "signage",
+          "label": "Informational signage and menu labeling",
+          "description": "Passive education at point of service",
+          "deltas": {
+            "waste": -2,
+            "emissions": -1,
+            "cost": 3,
+            "efficiency": 2,
+            "communityTrust": 8
+          },
+          "explanation": "Low-touch education reaches all diners with minimal effort."
+        }
+      ]
+    },
+    {
+      "id": "alternative-proteins",
+      "title": "Alternative Protein Integration",
+      "prompt": "Add plant-based meat alternatives and cultivated proteins to menu?",
+      "tags": ["emissions", "waste", "cost"],
+      "severity": "medium",
+      "triggers": {
+        "emissions_min": 55
+      },
+      "options": [
+        {
+          "id": "full-alternatives",
+          "label": "Replace 50% of meat options with alternatives",
+          "description": "Impossible, Beyond, and cultivated options",
+          "deltas": {
+            "waste": -8,
+            "emissions": -20,
+            "cost": 8,
+            "efficiency": 2,
+            "communityTrust": 10
+          },
+          "explanation": "Alternative proteins offer familiar experience with lower emissions."
+        },
+        {
+          "id": "featured-options",
+          "label": "Add alternatives as featured options alongside traditional",
+          "description": "Choice without replacement",
+          "deltas": {
+            "waste": -4,
+            "emissions": -10,
+            "cost": 5,
+            "efficiency": 0,
+            "communityTrust": 8
+          },
+          "explanation": "Expanded choice lets customers opt in without forcing change."
+        },
+        {
+          "id": "whole-foods",
+          "label": "Focus on whole-food plant proteins (beans, lentils, tofu)",
+          "description": "Minimally processed alternatives",
+          "deltas": {
+            "waste": -6,
+            "emissions": -15,
+            "cost": -3,
+            "efficiency": 4,
+            "communityTrust": 12
+          },
+          "explanation": "Whole foods offer sustainability benefits at lower cost."
+        }
+      ]
+    },
+    {
+      "id": "packaging-deposit",
+      "title": "Container Deposit Return System",
+      "prompt": "Implement deposit system to incentivize container returns. Worth the logistics?",
+      "tags": ["waste", "cost", "efficiency"],
+      "severity": "medium",
+      "triggers": {
+        "waste_min": 50
+      },
+      "options": [
+        {
+          "id": "automated-deposit",
+          "label": "Install automated return kiosks with deposit tracking",
+          "description": "Tech-enabled deposit system",
+          "deltas": {
+            "waste": -18,
+            "emissions": -5,
+            "cost": 15,
+            "efficiency": -4,
+            "communityTrust": 15
+          },
+          "explanation": "Automation makes deposit system convenient and effective."
+        },
+        {
+          "id": "manual-deposit",
+          "label": "Staff-managed deposit and return at service counters",
+          "description": "Personal interaction model",
+          "deltas": {
+            "waste": -12,
+            "emissions": -3,
+            "cost": 8,
+            "efficiency": -6,
+            "communityTrust": 12
+          },
+          "explanation": "Personal approach builds relationships but requires staff time."
+        }
+      ]
+    },
+    {
+      "id": "energy-storage",
+      "title": "Battery Energy Storage System",
+      "prompt": "Store renewable energy for use during peak demand periods. Big investment, major impact.",
+      "tags": ["emissions", "cost", "efficiency"],
+      "severity": "hard",
+      "triggers": {
+        "emissions_min": 55,
+        "efficiency_min": 60
+      },
+      "options": [
+        {
+          "id": "large-battery",
+          "label": "Install large-scale battery storage system",
+          "description": "4-hour backup capacity with peak shaving",
+          "deltas": {
+            "waste": 0,
+            "emissions": -25,
+            "cost": 35,
+            "efficiency": 18,
+            "communityTrust": 12
+          },
+          "explanation": "Battery storage maximizes renewable energy use and grid independence."
+        },
+        {
+          "id": "thermal-storage",
+          "label": "Ice thermal energy storage for cooling",
+          "description": "Make ice at night, use for cooling during day",
+          "deltas": {
+            "waste": 0,
+            "emissions": -15,
+            "cost": 18,
+            "efficiency": 12,
+            "communityTrust": 6
+          },
+          "explanation": "Thermal storage shifts energy use to off-peak hours."
+        },
+        {
+          "id": "demand-response",
+          "label": "Join utility demand response program without storage",
+          "description": "Reduce usage during peak periods for credits",
+          "deltas": {
+            "waste": 0,
+            "emissions": -8,
+            "cost": -5,
+            "efficiency": 5,
+            "communityTrust": 3
+          },
+          "explanation": "Grid participation provides benefits without major investment."
+        }
+      ]
+    },
+    {
+      "id": "cultural-foodways",
+      "title": "Cultural Food Heritage Program",
+      "prompt": "Celebrate diverse cultural foodways while prioritizing sustainability. How to balance?",
+      "tags": ["trust", "emissions"],
+      "severity": "easy",
+      "triggers": {
+        "trust_max": 70
+      },
+      "options": [
+        {
+          "id": "cultural-rotation",
+          "label": "Monthly cultural cuisine spotlights with sustainable sourcing",
+          "description": "Celebrate diversity through food",
+          "deltas": {
+            "waste": -3,
+            "emissions": -5,
+            "cost": 5,
+            "efficiency": 0,
+            "communityTrust": 20
+          },
+          "explanation": "Cultural celebration builds inclusive community around sustainable food."
+        },
+        {
+          "id": "fusion-sustainable",
+          "label": "Create fusion dishes merging cultural traditions with local ingredients",
+          "description": "Innovation honoring heritage",
+          "deltas": {
+            "waste": -2,
+            "emissions": -4,
+            "cost": 3,
+            "efficiency": 2,
+            "communityTrust": 12
+          },
+          "explanation": "Creative approach balances cultural respect with sustainability."
+        }
+      ]
+    },
+    {
+      "id": "food-policy-advocacy",
+      "title": "Food Policy Advocacy Campaign",
+      "prompt": "Advocate for state/federal policies supporting sustainable food systems?",
+      "tags": ["trust", "policy"],
+      "severity": "medium",
+      "triggers": {
+        "trust_min": 65
+      },
+      "options": [
+        {
+          "id": "lead-coalition",
+          "label": "Lead institutional coalition for policy reform",
+          "description": "Organize and fund advocacy efforts",
+          "deltas": {
+            "waste": -4,
+            "emissions": -6,
+            "cost": 12,
+            "efficiency": 0,
+            "communityTrust": 22
+          },
+          "explanation": "Policy change creates systemic impact beyond individual actions."
+        },
+        {
+          "id": "join-advocacy",
+          "label": "Join existing food policy advocacy organizations",
+          "description": "Support established groups",
+          "deltas": {
+            "waste": -2,
+            "emissions": -3,
+            "cost": 5,
+            "efficiency": 0,
+            "communityTrust": 12
+          },
+          "explanation": "Coalition participation amplifies voice without leadership burden."
+        },
+        {
+          "id": "focus-internal",
+          "label": "Focus on internal changes, avoid political advocacy",
+          "description": "Operational excellence only",
+          "deltas": {
+            "waste": 0,
+            "emissions": 0,
+            "cost": 0,
+            "efficiency": 2,
+            "communityTrust": -3
+          },
+          "explanation": "Neutral stance avoids controversy but limits systemic impact."
+        }
+      ]
+    },
+    {
+      "id": "surplus-processing",
+      "title": "On-Site Surplus Food Processing",
+      "prompt": "Turn surplus produce into preserves, pickles, and sauces to extend shelf life.",
+      "tags": ["waste", "efficiency"],
+      "severity": "medium",
+      "triggers": {
+        "waste_min": 50
+      },
+      "options": [
+        {
+          "id": "processing-kitchen",
+          "label": "Build dedicated food preservation kitchen",
+          "description": "Canning, pickling, and dehydrating facility",
+          "deltas": {
+            "waste": -20,
+            "emissions": -6,
+            "cost": 18,
+            "efficiency": 8,
+            "communityTrust": 15
+          },
+          "explanation": "Processing infrastructure eliminates waste while creating new menu items."
+        },
+        {
+          "id": "seasonal-processing",
+          "label": "Seasonal preservation projects with existing equipment",
+          "description": "Use slow periods for value-added production",
+          "deltas": {
+            "waste": -10,
+            "emissions": -3,
+            "cost": 6,
+            "efficiency": 5,
+            "communityTrust": 8
+          },
+          "explanation": "Work within existing capacity for modest preservation."
+        }
+      ]
+    },
+    {
+      "id": "transparency-challenge",
+      "title": "Radical Transparency Challenge",
+      "prompt": "Live-stream kitchen operations and publish all sustainability data in real-time?",
+      "tags": ["trust", "efficiency"],
+      "severity": "hard",
+      "triggers": {
+        "trust_min": 70,
+        "efficiency_min": 65
+      },
+      "options": [
+        {
+          "id": "full-transparency",
+          "label": "Install cameras and real-time data dashboard open to public",
+          "description": "Complete operational transparency",
+          "deltas": {
+            "waste": -5,
+            "emissions": -4,
+            "cost": 15,
+            "efficiency": -8,
+            "communityTrust": 28
+          },
+          "explanation": "Radical transparency builds unprecedented trust but exposes all issues."
+        },
+        {
+          "id": "scheduled-tours",
+          "label": "Offer regular behind-the-scenes tours and Q&A sessions",
+          "description": "Controlled transparency with personal interaction",
+          "deltas": {
+            "waste": -2,
+            "emissions": -2,
+            "cost": 5,
+            "efficiency": -3,
+            "communityTrust": 15
+          },
+          "explanation": "Curated access shows operations while managing narrative."
+        },
+        {
+          "id": "data-reports",
+          "label": "Quarterly reports with aggregated data",
+          "description": "Standard transparency model",
+          "deltas": {
+            "waste": -1,
+            "emissions": -1,
+            "cost": 2,
+            "efficiency": 0,
+            "communityTrust": 8
+          },
+          "explanation": "Traditional approach balances transparency with operational control."
+        }
+      ]
+    },
+    {
+      "id": "zero-emission-delivery",
+      "title": "Zero-Emission Delivery Fleet",
+      "prompt": "Switch delivery vehicles to electric bikes and EVs for zero-emission logistics.",
+      "tags": ["emissions", "cost"],
+      "severity": "medium",
+      "triggers": {
+        "emissions_min": 55
+      },
+      "options": [
+        {
+          "id": "full-ev-fleet",
+          "label": "Replace all delivery vehicles with electric fleet",
+          "description": "EVs and e-bikes with charging infrastructure",
+          "deltas": {
+            "waste": 0,
+            "emissions": -18,
+            "cost": 28,
+            "efficiency": 6,
+            "communityTrust": 16
+          },
+          "explanation": "Zero-emission delivery eliminates transport emissions from operations."
+        },
+        {
+          "id": "ebike-focus",
+          "label": "Use cargo e-bikes for campus deliveries",
+          "description": "Bikes for short-range, EVs for long-range",
+          "deltas": {
+            "waste": 0,
+            "emissions": -12,
+            "cost": 12,
+            "efficiency": 4,
+            "communityTrust": 12
+          },
+          "explanation": "E-bikes work well for campus distances at lower cost."
+        },
+        {
+          "id": "biodiesel-transition",
+          "label": "Convert existing fleet to renewable biodiesel",
+          "description": "Use existing vehicles with cleaner fuel",
+          "deltas": {
+            "waste": 0,
+            "emissions": -8,
+            "cost": 6,
+            "efficiency": 2,
+            "communityTrust": 6
+          },
+          "explanation": "Incremental improvement without fleet replacement."
+        }
+      ]
     }
   ]
 }

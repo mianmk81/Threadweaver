@@ -5,7 +5,7 @@
  * Jump, Rewind, Reweave, and Autopilot toggle
  */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useThreadweaverStore } from '@/lib/store/useThreadweaverStore';
 import { simulateAutopilot } from '@/lib/utils/api';
 import {
@@ -34,8 +34,32 @@ export default function ChronosControls() {
 
   const [sliderValue, setSliderValue] = useState(currentStep);
   const [isRunningAutopilot, setIsRunningAutopilot] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
 
   const activeThread = getActiveThread();
+
+  // Calculate the last step number (for branched threads this is != nodes.length)
+  const lastStep = activeThread?.nodes.length > 0
+    ? Math.max(...activeThread.nodes.map(n => n.step))
+    : 0;
+
+  // Timeline is complete when the highest step number is 10
+  const isTimelineComplete = lastStep >= 10;
+
+  // Debug logging
+  if (activeThread) {
+    console.log(`Timeline: ${activeThread.nodes.length} total nodes, lastStep: ${lastStep}, complete: ${isTimelineComplete}`);
+  }
+
+  // Fix hydration mismatch - only use client state after mount
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  // Sync slider with external currentStep changes (e.g., thread switching, autopilot)
+  useEffect(() => {
+    setSliderValue(currentStep);
+  }, [currentStep]);
 
   const handleJump = (targetStep: number) => {
     jumpToStep(targetStep);
@@ -65,8 +89,9 @@ export default function ChronosControls() {
   const handleAutopilot = async () => {
     if (isRunningAutopilot) return;
 
-    // Calculate remaining steps
-    const remainingSteps = 10 - (activeThread?.nodes.length || 0);
+    // Calculate remaining steps based on last step number (not node count)
+    // For branched threads, this ensures we continue from where the branch left off
+    const remainingSteps = 10 - lastStep;
 
     if (remainingSteps <= 0) {
       alert("Timeline is already complete! No more decisions to make.");
@@ -78,11 +103,19 @@ export default function ChronosControls() {
     try {
       const currentMetrics = getCurrentMetrics();
 
-      console.log(`Running autopilot for ${remainingSteps} steps...`);
+      // Collect card IDs already used in this thread (exclude initial node at step 0)
+      const usedCardIds = activeThread?.nodes
+        .filter(node => node.step > 0 && node.cardId)
+        .map(node => node.cardId) || [];
+
+      console.log(`Running autopilot for ${remainingSteps} steps starting from step ${lastStep + 1}...`);
+      console.log(`Already used ${usedCardIds.length} cards:`, usedCardIds);
 
       const response = await simulateAutopilot({
         initialMetrics: currentMetrics,
         steps: remainingSteps,
+        startStep: lastStep + 1,
+        usedCardIds: usedCardIds,
       });
 
       // Add all simulated nodes to the current thread
@@ -200,22 +233,26 @@ export default function ChronosControls() {
         {/* Autopilot button */}
         <button
           onClick={handleAutopilot}
-          disabled={isRunningAutopilot || (activeThread?.nodes.length || 0) >= 10}
+          disabled={!isMounted || isRunningAutopilot || isTimelineComplete}
           className={`
             px-3 lg:px-4 py-2 rounded-lg font-semibold transition-all duration-300
             flex items-center justify-center gap-2 text-sm lg:text-base order-4
-            ${isRunningAutopilot
+            ${!isMounted
+              ? 'bg-cosmic-slate/30 text-gray-500 cursor-not-allowed'
+              : isRunningAutopilot
               ? 'bg-gradient-to-r from-emerald to-emerald-light text-cosmic-dark shadow-glow-emerald'
-              : (activeThread?.nodes.length || 0) >= 10
+              : isTimelineComplete
                 ? 'bg-cosmic-slate/30 text-gray-500 cursor-not-allowed'
                 : 'bg-cosmic-slate/50 text-gray-300 hover:bg-emerald/20 hover:text-emerald'
             }
           `}
           aria-label="Run autopilot simulation"
           title={
-            (activeThread?.nodes.length || 0) >= 10
+            !isMounted
+              ? 'Loading...'
+              : isTimelineComplete
               ? 'Timeline complete'
-              : `Simulate ${10 - (activeThread?.nodes.length || 0)} remaining decisions`
+              : `Simulate ${10 - lastStep} remaining decisions`
           }
         >
           {isRunningAutopilot ? (

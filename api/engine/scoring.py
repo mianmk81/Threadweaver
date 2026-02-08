@@ -2,7 +2,7 @@
 Card scoring and selection algorithm.
 Implements AI decision engine that picks next card based on current state.
 """
-import random
+from random import Random
 from typing import List, Optional, Tuple
 from .cards import load_all_cards
 
@@ -187,9 +187,8 @@ def select_card(
         5. Add seeded randomness
         6. Return top card with explanation
     """
-    # Set random seed for reproducibility
-    if seed is not None:
-        random.seed(seed)
+    # Create local Random instance for thread-safe randomness
+    rng = Random(seed) if seed is not None else Random()
 
     # 1. Load all cards
     all_cards = load_all_cards()
@@ -197,14 +196,17 @@ def select_card(
     # 2. Filter out used cards
     available_cards = [card for card in all_cards if card["id"] not in used_card_ids]
 
+    # Fallback: If all cards used, allow reuse (important for long timelines/autopilot)
     if not available_cards:
-        return None, "All cards have been used in this session.", {}
+        print(f"All {len(all_cards)} cards have been used. Allowing card reuse.")
+        available_cards = all_cards
 
     # 3. Filter by triggers
     eligible_cards = filter_by_triggers(metrics, available_cards)
 
+    # Fallback: If no cards match triggers, use any available card
     if not eligible_cards:
-        # Fallback: If no cards match triggers, use all available
+        print(f"No cards match current triggers. Using {len(available_cards)} available cards.")
         eligible_cards = available_cards
 
     # 4. Calculate urgency and score cards
@@ -227,7 +229,7 @@ def select_card(
 
     # Weighted random selection (higher scores = higher probability)
     weights = [c["score"] for c in top_candidates]
-    selected = random.choices(top_candidates, weights=weights, k=1)[0]
+    selected = rng.choices(top_candidates, weights=weights, k=1)[0]
 
     # Build rationale
     top_factors = selected["factors"][:3]  # Top 3 reasons
