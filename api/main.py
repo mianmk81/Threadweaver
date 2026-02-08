@@ -2,9 +2,10 @@
 FastAPI backend for Threadweaver: Sustainable Futures.
 Provides AI-driven decision generation and autopilot simulation.
 """
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
+import fitz  # PyMuPDF
 
 from schemas.models import (
     GenerateDecisionRequest,
@@ -372,6 +373,63 @@ Operational scale: {request.companyProfile.customMetrics.operationalScale if req
         raise HTTPException(
             status_code=500,
             detail=f"Error generating custom cards: {str(e)}"
+        )
+
+
+# ==================== PDF Extraction ====================
+
+@app.post("/api/extract-pdf")
+async def extract_pdf(file: UploadFile = File(...)):
+    """
+    Extract text content from uploaded PDF file.
+
+    Args:
+        file: PDF file upload
+
+    Returns:
+        Extracted text content
+
+    Raises:
+        HTTPException: If file is not PDF or extraction fails
+    """
+    if not file.filename.endswith('.pdf'):
+        raise HTTPException(
+            status_code=400,
+            detail="Only PDF files are supported"
+        )
+
+    try:
+        # Read PDF file
+        pdf_bytes = await file.read()
+
+        # Extract text using PyMuPDF
+        doc = fitz.open(stream=pdf_bytes, filetype="pdf")
+
+        extracted_text = ""
+        for page_num in range(len(doc)):
+            page = doc[page_num]
+            extracted_text += page.get_text()
+
+        doc.close()
+
+        # Clean up text (remove excessive whitespace)
+        extracted_text = " ".join(extracted_text.split())
+
+        # Limit to reasonable length (for AI processing)
+        max_length = 5000  # characters
+        if len(extracted_text) > max_length:
+            extracted_text = extracted_text[:max_length] + "..."
+
+        return {
+            "extractedText": extracted_text,
+            "pageCount": len(doc),
+            "filename": file.filename
+        }
+
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to extract PDF content: {str(e)}"
         )
 
 

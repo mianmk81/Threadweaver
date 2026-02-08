@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Building2, Users, MapPin, Target, Sparkles, X } from 'lucide-react';
+import { Building2, Users, MapPin, Target, Sparkles, X, Upload, FileText } from 'lucide-react';
 import type { CompanyProfile } from '@/lib/types';
 
 interface CompanySetupModalProps {
@@ -21,7 +21,6 @@ const INDUSTRIES = [
   'Agriculture',
   'Transportation',
   'Energy',
-  'Other',
 ];
 
 const COMPANY_SIZES = [
@@ -59,6 +58,8 @@ export default function CompanySetupModal({ isOpen, onComplete, onSkip }: Compan
     currentChallenges: [],
     sustainabilityGoals: [],
   });
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [isExtractingPDF, setIsExtractingPDF] = useState(false);
 
   if (!isOpen) return null;
 
@@ -109,11 +110,55 @@ export default function CompanySetupModal({ isOpen, onComplete, onSkip }: Compan
     }
   };
 
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (file.type !== 'application/pdf') {
+      alert('Please upload a PDF file');
+      return;
+    }
+
+    setUploadedFile(file);
+    setIsExtractingPDF(true);
+
+    try {
+      // Create FormData to send file
+      const formData = new FormData();
+      formData.append('file', file);
+
+      // Send to backend for extraction (we'll create this endpoint)
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8003'}/api/extract-pdf`, {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to extract PDF content');
+      }
+
+      const data = await response.json();
+
+      // Update profile description with extracted text
+      setProfile({
+        ...profile,
+        description: data.extractedText || profile.description,
+      });
+
+      console.log('PDF extracted successfully');
+    } catch (error) {
+      console.error('Error extracting PDF:', error);
+      alert('Failed to extract PDF content. You can still continue with manual input.');
+    } finally {
+      setIsExtractingPDF(false);
+    }
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80">
-      <div className="bg-cosmic-dark border-2 border-gold/30 rounded-lg max-w-3xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
+      <div className="bg-black border-2 border-gold/30 rounded-lg max-w-3xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
         {/* Header */}
-        <div className="sticky top-0 bg-gradient-to-r from-gold/20 to-emerald/20 border-b border-gold/30 p-6">
+        <div className="sticky top-0 bg-black border-b border-gold/30 p-6">
           <div className="flex items-start justify-between">
             <div>
               <h2 className="text-2xl font-bold text-gold flex items-center gap-2">
@@ -159,7 +204,7 @@ export default function CompanySetupModal({ isOpen, onComplete, onSkip }: Compan
                   value={profile.companyName || ''}
                   onChange={(e) => setProfile({ ...profile, companyName: e.target.value })}
                   placeholder="e.g., Campus Dining Services"
-                  className="w-full px-4 py-3 bg-cosmic-darker border border-gray-700 rounded-lg text-gray-100 focus:border-gold focus:outline-none"
+                  className="w-full px-4 py-3 bg-black border border-gray-700 rounded-lg text-white focus:border-gold focus:outline-none placeholder:text-gray-500"
                 />
               </div>
 
@@ -170,14 +215,19 @@ export default function CompanySetupModal({ isOpen, onComplete, onSkip }: Compan
                 <select
                   value={profile.industry || ''}
                   onChange={(e) => setProfile({ ...profile, industry: e.target.value })}
-                  className="w-full px-4 py-3 bg-cosmic-darker border border-gray-700 rounded-lg text-gray-100 focus:border-gold focus:outline-none"
+                  className="w-full px-4 py-3 bg-black border border-gray-700 rounded-lg text-white focus:border-gold focus:outline-none"
+                  style={{
+                    backgroundColor: '#000000',
+                    color: '#ffffff',
+                  }}
                 >
-                  <option value="">Select industry...</option>
+                  <option value="" style={{ backgroundColor: '#000000', color: '#ffffff' }}>Select industry...</option>
                   {INDUSTRIES.map((industry) => (
-                    <option key={industry} value={industry}>
+                    <option key={industry} value={industry} style={{ backgroundColor: '#000000', color: '#ffffff' }}>
                       {industry}
                     </option>
                   ))}
+                  <option value="Other" style={{ backgroundColor: '#000000', color: '#ffffff' }}>Other</option>
                 </select>
               </div>
 
@@ -193,10 +243,10 @@ export default function CompanySetupModal({ isOpen, onComplete, onSkip }: Compan
                       className={`p-4 border-2 rounded-lg text-left transition-all ${
                         profile.size === size.value
                           ? 'border-gold bg-gold/10'
-                          : 'border-gray-700 hover:border-gold/50'
+                          : 'border-gray-700 hover:border-gold/50 bg-black'
                       }`}
                     >
-                      <div className="font-semibold text-gray-100">{size.label}</div>
+                      <div className="font-semibold text-white">{size.label}</div>
                       <div className="text-xs text-gray-400 mt-1">{size.description}</div>
                     </button>
                   ))}
@@ -212,8 +262,50 @@ export default function CompanySetupModal({ isOpen, onComplete, onSkip }: Compan
                   value={profile.location || ''}
                   onChange={(e) => setProfile({ ...profile, location: e.target.value })}
                   placeholder="e.g., Seattle, WA"
-                  className="w-full px-4 py-3 bg-cosmic-darker border border-gray-700 rounded-lg text-gray-100 focus:border-gold focus:outline-none"
+                  className="w-full px-4 py-3 bg-black border border-gray-700 rounded-lg text-white focus:border-gold focus:outline-none placeholder:text-gray-500"
                 />
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-emerald mb-2">
+                  Upload Company Document (Optional)
+                </label>
+                <div className="relative">
+                  <input
+                    type="file"
+                    accept=".pdf"
+                    onChange={handleFileUpload}
+                    disabled={isExtractingPDF}
+                    className="hidden"
+                    id="pdf-upload"
+                  />
+                  <label
+                    htmlFor="pdf-upload"
+                    className={`w-full px-4 py-3 bg-black border-2 border-dashed border-gray-700 rounded-lg text-gray-400 hover:border-emerald hover:text-emerald transition-colors cursor-pointer flex items-center justify-center gap-2 ${
+                      isExtractingPDF ? 'opacity-50 cursor-not-allowed' : ''
+                    }`}
+                  >
+                    {isExtractingPDF ? (
+                      <>
+                        <div className="animate-spin rounded-full h-5 w-5 border-2 border-emerald border-t-transparent"></div>
+                        <span>Extracting PDF content...</span>
+                      </>
+                    ) : uploadedFile ? (
+                      <>
+                        <FileText className="w-5 h-5 text-emerald" />
+                        <span className="text-emerald">{uploadedFile.name}</span>
+                      </>
+                    ) : (
+                      <>
+                        <Upload className="w-5 h-5" />
+                        <span>Click to upload PDF (Annual report, sustainability report, etc.)</span>
+                      </>
+                    )}
+                  </label>
+                </div>
+                <p className="text-xs text-gray-500 mt-2">
+                  Upload a PDF document about your company. AI will extract relevant information to create personalized scenarios.
+                </p>
               </div>
             </div>
           )}
@@ -233,7 +325,7 @@ export default function CompanySetupModal({ isOpen, onComplete, onSkip }: Compan
                       className={`px-4 py-2 border rounded-lg text-sm text-left transition-all ${
                         profile.currentChallenges?.includes(challenge)
                           ? 'border-gold bg-gold/10 text-gold'
-                          : 'border-gray-700 text-gray-300 hover:border-gold/50'
+                          : 'border-gray-700 text-white hover:border-gold/50 bg-black'
                       }`}
                     >
                       {challenge}
@@ -254,7 +346,7 @@ export default function CompanySetupModal({ isOpen, onComplete, onSkip }: Compan
                       className={`px-4 py-2 border rounded-lg text-sm text-left transition-all ${
                         profile.sustainabilityGoals?.includes(goal)
                           ? 'border-emerald bg-emerald/10 text-emerald'
-                          : 'border-gray-700 text-gray-300 hover:border-emerald/50'
+                          : 'border-gray-700 text-white hover:border-emerald/50 bg-black'
                       }`}
                     >
                       {goal}
@@ -277,14 +369,14 @@ export default function CompanySetupModal({ isOpen, onComplete, onSkip }: Compan
                   onChange={(e) => setProfile({ ...profile, description: e.target.value })}
                   placeholder="Describe your current operations, scale, and any specific context that would help generate relevant scenarios..."
                   rows={6}
-                  className="w-full px-4 py-3 bg-cosmic-darker border border-gray-700 rounded-lg text-gray-100 focus:border-gold focus:outline-none resize-none"
+                  className="w-full px-4 py-3 bg-black border border-gray-700 rounded-lg text-white focus:border-gold focus:outline-none resize-none placeholder:text-gray-500"
                 />
                 <p className="text-xs text-gray-500 mt-2">
                   Example: "We operate 3 dining halls serving 5,000+ students daily with traditional kitchen equipment. Currently facing high food waste and pressure to improve sustainability."
                 </p>
               </div>
 
-              <div className="bg-purple/10 border border-purple/30 rounded-lg p-4">
+              <div className="bg-black border border-purple/30 rounded-lg p-4">
                 <div className="flex items-start gap-3">
                   <Sparkles className="w-5 h-5 text-purple mt-0.5" />
                   <div>
@@ -300,7 +392,7 @@ export default function CompanySetupModal({ isOpen, onComplete, onSkip }: Compan
         </div>
 
         {/* Footer */}
-        <div className="border-t border-gold/20 p-6 flex justify-between">
+        <div className="border-t border-gold/20 p-6 flex justify-between bg-black">
           <button
             onClick={handleBack}
             disabled={step === 1}

@@ -5,6 +5,8 @@
  */
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { Home } from 'lucide-react';
 import { useThreadweaverStore } from '@/lib/store/useThreadweaverStore';
 import { useKeyboardShortcuts } from '@/lib/hooks/useKeyboardShortcuts';
 import { generateCustomCards } from '@/lib/utils/api';
@@ -93,18 +95,28 @@ export default function LoomPage() {
                 Weave your timeline through sustainability decisions
               </p>
             </div>
-            <button
-              type="button"
-              onClick={() => {
-                if (window.confirm('Delete all timelines and start with a fresh baseline? This cannot be undone.')) {
-                  resetAllTimelines();
-                }
-              }}
-              className="btn-ghost text-sm shrink-0 self-start sm:self-center"
-              aria-label="Reset all timelines"
-            >
-              Reset all timelines
-            </button>
+            <div className="flex gap-3 items-center self-start sm:self-center">
+              <Link
+                href="/"
+                className="btn-ghost text-sm shrink-0 flex items-center gap-2"
+                aria-label="Go to home"
+              >
+                <Home className="w-4 h-4" />
+                <span>Home</span>
+              </Link>
+              <button
+                type="button"
+                onClick={() => {
+                  if (window.confirm('Delete all timelines and start with a fresh baseline? This cannot be undone.')) {
+                    resetAllTimelines();
+                  }
+                }}
+                className="btn-ghost text-sm shrink-0"
+                aria-label="Reset all timelines"
+              >
+                Reset all timelines
+              </button>
+            </div>
           </div>
         </header>
 

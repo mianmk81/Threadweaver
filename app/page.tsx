@@ -2,13 +2,58 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { Building2 } from "lucide-react";
+import CompanySetupModal from "@/components/ui/CompanySetupModal";
+import { useThreadweaverStore } from "@/lib/store/useThreadweaverStore";
+import { generateCustomCards } from "@/lib/utils/api";
+import type { CompanyProfile } from "@/lib/types";
 
 export default function Home() {
   const [mounted, setMounted] = useState(false);
+  const [showCompanySetup, setShowCompanySetup] = useState(false);
+  const [isGeneratingCards, setIsGeneratingCards] = useState(false);
+  const { setCompanyProfile, createSession } = useThreadweaverStore();
+  const router = useRouter();
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  const handleCompanySetupComplete = async (profile: CompanyProfile) => {
+    setCompanyProfile(profile);
+    setShowCompanySetup(false);
+    setIsGeneratingCards(true);
+
+    try {
+      // Generate custom cards based on company profile
+      const response = await generateCustomCards({
+        companyProfile: profile,
+        numberOfCards: 10,
+      });
+
+      console.log(`Generated ${response.cards.length} custom cards for ${profile.companyName}`);
+
+      // Create session with custom profile
+      createSession(`${profile.industry} - ${profile.companyName}`, profile);
+
+      // Navigate to loom
+      router.push('/loom');
+    } catch (error) {
+      console.error('Failed to generate custom cards:', error);
+      // Fallback to default scenario on error
+      createSession(`${profile.industry} - ${profile.companyName}`, profile);
+      router.push('/loom');
+    } finally {
+      setIsGeneratingCards(false);
+    }
+  };
+
+  const handleSkipSetup = () => {
+    createSession('Campus Dining / Restaurant Group');
+    setShowCompanySetup(false);
+    router.push('/loom');
+  };
 
   return (
     <div className="relative min-h-screen overflow-hidden">
@@ -96,28 +141,56 @@ export default function Home() {
           ))}
         </div>
 
-        {/* CTA Button */}
-        <Link
-          href="/loom"
-          className="btn-primary group relative overflow-hidden text-lg shadow-lg"
-          style={{
-            boxShadow: "0 0 30px rgba(255, 215, 0, 0.4)",
-          }}
-        >
-          <span className="relative z-10 flex items-center gap-3">
-            <span className="text-2xl">🧵</span>
-            <span>Enter the Loom</span>
-            <span className="text-2xl">✨</span>
-          </span>
-          {/* Hover glow effect */}
-          <div
-            className="absolute inset-0 -z-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+        {/* CTA Buttons */}
+        <div className="flex flex-col items-center gap-4">
+          {/* Customize Company Button */}
+          <button
+            onClick={() => setShowCompanySetup(true)}
+            disabled={isGeneratingCards}
+            className="btn-ghost group relative overflow-hidden text-base border-2 border-emerald/50 hover:border-emerald"
+          >
+            <span className="relative z-10 flex items-center gap-2">
+              <Building2 className="w-5 h-5" />
+              <span>Customize Your Company</span>
+            </span>
+            {/* Hover glow effect */}
+            <div
+              className="absolute inset-0 -z-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+              style={{
+                background:
+                  "radial-gradient(circle at center, rgba(16, 185, 129, 0.2), transparent)",
+              }}
+            />
+          </button>
+
+          {/* Enter the Loom Button */}
+          <Link
+            href="/loom"
+            className="btn-primary group relative overflow-hidden text-lg shadow-lg"
             style={{
-              background:
-                "radial-gradient(circle at center, rgba(255, 215, 0, 0.3), transparent)",
+              boxShadow: "0 0 30px rgba(255, 215, 0, 0.4)",
             }}
-          />
-        </Link>
+          >
+            <span className="relative z-10 flex items-center gap-3">
+              <span className="text-2xl">🧵</span>
+              <span>Enter the Loom</span>
+              <span className="text-2xl">✨</span>
+            </span>
+            {/* Hover glow effect */}
+            <div
+              className="absolute inset-0 -z-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+              style={{
+                background:
+                  "radial-gradient(circle at center, rgba(255, 215, 0, 0.3), transparent)",
+              }}
+            />
+          </Link>
+
+          {/* Helper text */}
+          <p className="text-xs text-gray-500 mt-2">
+            Customize your company for personalized scenarios, or jump right in with the default experience
+          </p>
+        </div>
 
         {/* Features */}
         <div className="mt-20 grid max-w-4xl gap-6 md:grid-cols-3">
@@ -158,6 +231,24 @@ export default function Home() {
           </p>
         </div>
       </main>
+
+      {/* Company Setup Modal */}
+      <CompanySetupModal
+        isOpen={showCompanySetup}
+        onComplete={handleCompanySetupComplete}
+        onSkip={handleSkipSetup}
+      />
+
+      {/* Loading overlay when generating cards */}
+      {isGeneratingCards && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90">
+          <div className="text-center">
+            <div className="inline-block animate-spin rounded-full h-16 w-16 border-4 border-gold border-t-transparent mb-4"></div>
+            <p className="text-gold text-lg font-semibold">Generating personalized scenarios...</p>
+            <p className="text-gray-400 text-sm mt-2">This may take a few moments</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

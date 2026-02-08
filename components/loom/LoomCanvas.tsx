@@ -1,13 +1,21 @@
 'use client';
 
 /**
- * LoomCanvas - SVG timeline visualization
- * Shows timeline threads with decision nodes and rune markers
+ * LoomCanvas - Living Loom SVG timeline visualization
+ * Phase 1: Enhanced static rendering with smooth Catmull-Rom splines
+ * Shows timeline threads with smooth curves, decision nodes, and rune markers
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useThreadweaverStore } from '@/lib/store/useThreadweaverStore';
 import { Sparkles, Circle, Maximize2, Trash2 } from 'lucide-react';
+import {
+  generateThreadControlPoints,
+  catmullRomSpline,
+  pointsToSVGPath,
+  type Point,
+} from '@/lib/utils/spline';
+import { createNoise2D } from 'simplex-noise';
 
 export default function LoomCanvas() {
   const [mounted, setMounted] = useState(false);
@@ -15,6 +23,36 @@ export default function LoomCanvas() {
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [hoveredThreadId, setHoveredThreadId] = useState<string | null>(null);
+
+  // Phase 2: Breathing animation state
+  const [time, setTime] = useState(0);
+  const [isAnimating, setIsAnimating] = useState(true);
+  const noiseRef = useRef<ReturnType<typeof createNoise2D> | null>(null);
+  const animationFrameRef = useRef<number | null>(null);
+
+  // Phase 3: Live branch growth tracking
+  const [revealProgress, setRevealProgress] = useState<Record<string, number>>({});
+  const previousThreadCountRef = useRef(0);
+
+  // Phase 4: Grab and pull interaction
+  const [draggedNode, setDraggedNode] = useState<{
+    threadId: string;
+    nodeStep: number;
+    startX: number;
+    startY: number;
+  } | null>(null);
+  const [pullOffset, setPullOffset] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+  const [isSpringBack, setIsSpringBack] = useState(false);
+
+  // Phase 5: Click ripple effects
+  const [clickedNode, setClickedNode] = useState<{
+    threadId: string;
+    nodeStep: number;
+    timestamp: number;
+  } | null>(null);
+
+  // Phase 6: Performance optimization - memoize expensive calculations
+  const [performanceMode, setPerformanceMode] = useState<'high' | 'balanced' | 'low'>('high');
 
   const {
     threads,
@@ -34,8 +72,247 @@ export default function LoomCanvas() {
   // Prevent hydration mismatch by only rendering after mount
   useEffect(() => {
     setMounted(true);
+
+    // Initialize noise generator for breathing animation
+    if (!noiseRef.current) {
+      noiseRef.current = createNoise2D();
+    }
   }, []);
 
+  // Phase 2: Breathing animation loop
+  useEffect(() => {
+    if (!mounted || !isAnimating) return;
+
+    const animate = () => {
+      setTime((t) => t + 0.016); // ~60fps (16ms per frame)
+      animationFrameRef.current = requestAnimationFrame(animate);
+    };
+
+    animationFrameRef.current = requestAnimationFrame(animate);
+
+    // Cleanup
+    return () => {
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
+    };
+  }, [mounted, isAnimating]);
+
+  // Pause animation when tab is hidden (performance optimization)
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      setIsAnimating(!document.hidden);
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, []);
+
+  // Phase 3: Detect new threads and animate their growth
+  useEffect(() => {
+    if (threads.length > previousThreadCountRef.current) {
+      // New thread(s) added - find which ones are new
+      const newThreads = threads.slice(previousThreadCountRef.current);
+
+      newThreads.forEach((thread) => {
+        // Initialize reveal progress at 0
+        setRevealProgress((prev) => ({ ...prev, [thread.id]: 0 }));
+
+        // Animate from 0 to 1 over 600ms
+        const startTime = Date.now();
+        const duration = 600; // ms
+
+        const animate = () => {
+          const elapsed = Date.now() - startTime;
+          const progress = Math.min(elapsed / duration, 1);
+
+          // Ease-out cubic for smooth deceleration
+          const eased = 1 - Math.pow(1 - progress, 3);
+
+          setRevealProgress((prev) => ({ ...prev, [thread.id]: eased }));
+
+          if (progress < 1) {
+            requestAnimationFrame(animate);
+          }
+        };
+
+        requestAnimationFrame(animate);
+      });
+    }
+
+    previousThreadCountRef.current = threads.length;
+  }, [threads.length, threads]);
+
+  // Initialize existing threads to full reveal
+  useEffect(() => {
+    if (!mounted) return;
+
+    threads.forEach((thread) => {
+      setRevealProgress((prev) => {
+        if (prev[thread.id] === undefined) {
+          return { ...prev, [thread.id]: 1 };
+        }
+        return prev;
+      });
+    });
+  }, [mounted, threads]);
+
+  // Phase 6: Auto-adjust performance mode based on thread count
+  useEffect(() => {
+    if (threads.length > 10) {
+      setPerformanceMode('low');
+    } else if (threads.length > 5) {
+      setPerformanceMode('balanced');
+    } else {
+      setPerformanceMode('high');
+    }
+  }, [threads.length]);
+
+  // Phase 2: Create wiggle function for breathing animation (Phase 6: optimized)
+  // MUST be before early returns to maintain consistent hook order
+  const createWiggleFunction = useCallback(
+    (threadIndex: number, isActive: boolean) => {
+      if (!noiseRef.current) return undefined;
+
+      // Phase 6: Adjust amplitude based on performance mode
+      let amplitudeMultiplier = 1;
+      if (performanceMode === 'balanced') {
+        amplitudeMultiplier = isActive ? 1 : 0.5; // Reduce inactive thread motion
+      } else if (performanceMode === 'low') {
+        amplitudeMultiplier = isActive ? 0.8 : 0; // Only animate active thread
+      }
+
+      const amplitude = (isActive ? 4 : 2) * amplitudeMultiplier;
+      if (amplitude === 0) return undefined; // Skip calculation entirely
+
+      const frequency = 0.008; // Controls wave tightness
+      const speed = 0.3; // Animation speed
+
+      return (x: number): number => {
+        // Use thread index as noise seed for unique movement per thread
+        const noiseValue = noiseRef.current!(
+          x * frequency,
+          time * speed + threadIndex * 10
+        );
+
+        // Simplex noise returns [-1, 1], scale to desired amplitude
+        return noiseValue * amplitude;
+      };
+    },
+    [time, performanceMode]
+  );
+
+  // Phase 4: Calculate deformation offset for grab-and-pull
+  // MUST be before early returns to maintain consistent hook order
+  const calculateDeformationOffset = useCallback(
+    (nodeX: number, currentX: number, isDragged: boolean) => {
+      if (!draggedNode || !isDragged) return { x: 0, y: 0 };
+
+      // Distance from dragged node affects deformation strength
+      const distance = Math.abs(currentX - nodeX);
+      const maxInfluenceDistance = 300; // Deformation influence radius
+
+      if (distance > maxInfluenceDistance) return { x: 0, y: 0 };
+
+      // Gaussian falloff for natural elastic feel
+      const influence = Math.exp(-(distance * distance) / (2 * 100 * 100));
+
+      return {
+        x: pullOffset.x * influence,
+        y: pullOffset.y * influence,
+      };
+    },
+    [draggedNode, pullOffset]
+  );
+
+  // Phase 4: Handle node drag start
+  const handleNodeDragStart = useCallback(
+    (e: React.MouseEvent, threadId: string, nodeStep: number, nodeX: number, nodeY: number) => {
+      e.stopPropagation();
+      setIsDragging(false); // Disable canvas pan while dragging node
+
+      setDraggedNode({
+        threadId,
+        nodeStep,
+        startX: e.clientX,
+        startY: e.clientY,
+      });
+      setPullOffset({ x: 0, y: 0 });
+    },
+    []
+  );
+
+  // Phase 4: Handle node drag move
+  const handleNodeDragMove = useCallback(
+    (e: MouseEvent) => {
+      if (!draggedNode) return;
+
+      const dx = e.clientX - draggedNode.startX;
+      const dy = e.clientY - draggedNode.startY;
+
+      // Scale movement to SVG coordinates
+      const scaledDx = dx * (viewBox.width / 1000);
+      const scaledDy = dy * (viewBox.height / 600);
+
+      setPullOffset({ x: scaledDx, y: scaledDy });
+    },
+    [draggedNode, viewBox]
+  );
+
+  // Phase 4: Handle node drag end (spring back)
+  const handleNodeDragEnd = useCallback(() => {
+    if (!draggedNode) return;
+
+    setIsSpringBack(true);
+
+    // Animate spring back using requestAnimationFrame
+    const startOffset = { ...pullOffset };
+    const startTime = Date.now();
+    const duration = 400; // Spring duration in ms
+
+    const springBack = () => {
+      const elapsed = Date.now() - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+
+      // Spring easing: elastic ease-out
+      const eased =
+        progress === 1
+          ? 1
+          : 1 - Math.pow(2, -10 * progress) * Math.cos((progress * 10 - 0.75) * ((2 * Math.PI) / 3));
+
+      setPullOffset({
+        x: startOffset.x * (1 - eased),
+        y: startOffset.y * (1 - eased),
+      });
+
+      if (progress < 1) {
+        requestAnimationFrame(springBack);
+      } else {
+        setDraggedNode(null);
+        setPullOffset({ x: 0, y: 0 });
+        setIsSpringBack(false);
+      }
+    };
+
+    requestAnimationFrame(springBack);
+  }, [draggedNode, pullOffset]);
+
+  // Phase 4: Attach global mouse listeners for node dragging
+  useEffect(() => {
+    if (!draggedNode) return;
+
+    window.addEventListener('mousemove', handleNodeDragMove);
+    window.addEventListener('mouseup', handleNodeDragEnd);
+
+    return () => {
+      window.removeEventListener('mousemove', handleNodeDragMove);
+      window.removeEventListener('mouseup', handleNodeDragEnd);
+    };
+  }, [draggedNode, handleNodeDragMove, handleNodeDragEnd]);
+
+  // Early returns AFTER all hooks
   if (!mounted) {
     return (
       <div className="card-cosmic h-full flex items-center justify-center">
@@ -55,6 +332,8 @@ export default function LoomCanvas() {
     );
   }
 
+  // Helper functions and calculations (after hooks and early returns)
+
   // Calculate Y position for each thread (spread them vertically)
   const getThreadYPosition = (threadIndex: number, totalThreads: number) => {
     if (totalThreads === 1) return 50; // Center if only one thread
@@ -69,8 +348,14 @@ export default function LoomCanvas() {
     x: (i / 10) * 100, // Percentage of width
   }));
 
-  const handleNodeClick = (step: number) => {
+  const handleNodeClick = (step: number, threadId?: string) => {
     const node = activeThread.nodes.find(n => n.step === step);
+
+    // Phase 5: Trigger ripple effect
+    if (threadId) {
+      setClickedNode({ threadId, nodeStep: step, timestamp: Date.now() });
+      setTimeout(() => setClickedNode(null), 800); // Clear after animation
+    }
 
     if (node) {
       // Past or current node - show details
@@ -199,6 +484,32 @@ export default function LoomCanvas() {
         >
           <Maximize2 className="w-4 h-4" />
         </button>
+
+        {/* Breathing animation toggle */}
+        <button
+          onClick={() => setIsAnimating(!isAnimating)}
+          className={`p-2 bg-cosmic-dark/80 hover:bg-cosmic-dark border rounded-lg transition-all ${
+            isAnimating
+              ? 'border-emerald/50 text-emerald'
+              : 'border-gray-600 text-gray-400'
+          }`}
+          title={isAnimating ? 'Breathing ON (click to pause)' : 'Breathing OFF (click to enable)'}
+          aria-label={isAnimating ? 'Pause breathing animation' : 'Enable breathing animation'}
+        >
+          <Circle
+            className={`w-4 h-4 ${isAnimating ? 'animate-pulse' : ''}`}
+            fill={isAnimating ? 'currentColor' : 'none'}
+          />
+        </button>
+
+        {/* Phase 6: Performance mode indicator */}
+        {performanceMode !== 'high' && (
+          <div className="px-2 py-1 bg-cosmic-dark/80 border border-gold/30 rounded-lg text-xs">
+            <span className={performanceMode === 'balanced' ? 'text-yellow-400' : 'text-orange-400'}>
+              {performanceMode === 'balanced' ? '⚡ Balanced' : '🔋 Power Save'}
+            </span>
+          </div>
+        )}
       </div>
 
       {/* Legend */}
@@ -218,7 +529,7 @@ export default function LoomCanvas() {
         </div>
       </div>
 
-      {/* SVG Canvas */}
+      {/* SVG Canvas with accessibility */}
       <svg
         className="w-full h-full"
         viewBox={`${viewBox.x} ${viewBox.y} ${viewBox.width} ${viewBox.height}`}
@@ -233,9 +544,12 @@ export default function LoomCanvas() {
         onTouchEnd={handleTouchEnd}
         onDoubleClick={resetView}
         style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
+        role="img"
+        aria-label="Timeline visualization showing sustainability decision branches"
       >
-        {/* Grid background */}
+        {/* Enhanced SVG Definitions for Living Loom */}
         <defs>
+          {/* Cosmic grid background */}
           <pattern
             id="grid"
             width="50"
@@ -250,17 +564,100 @@ export default function LoomCanvas() {
             />
           </pattern>
 
-          {/* Glow filter for active nodes */}
-          <filter id="glow">
+          {/* Enhanced glow filter for active nodes */}
+          <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
             <feGaussianBlur stdDeviation="4" result="coloredBlur" />
             <feMerge>
+              <feMergeNode in="coloredBlur" />
               <feMergeNode in="coloredBlur" />
               <feMergeNode in="SourceGraphic" />
             </feMerge>
           </filter>
+
+          {/* Intense glow for hovered nodes */}
+          <filter id="intense-glow" x="-100%" y="-100%" width="300%" height="300%">
+            <feGaussianBlur stdDeviation="8" result="blur1" />
+            <feGaussianBlur stdDeviation="4" result="blur2" />
+            <feMerge>
+              <feMergeNode in="blur1" />
+              <feMergeNode in="blur2" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+
+          {/* Thread glow - subtle aura around threads */}
+          <filter id="thread-glow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="2" result="blur" />
+            <feMerge>
+              <feMergeNode in="blur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+
+          {/* Gradient definitions for thread colors */}
+          <linearGradient id="gold-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#FFD700" stopOpacity="0.6" />
+            <stop offset="50%" stopColor="#FFD700" stopOpacity="1" />
+            <stop offset="100%" stopColor="#FFD700" stopOpacity="0.6" />
+          </linearGradient>
+
+          <linearGradient id="emerald-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#10B981" stopOpacity="0.6" />
+            <stop offset="50%" stopColor="#10B981" stopOpacity="1" />
+            <stop offset="100%" stopColor="#10B981" stopOpacity="0.6" />
+          </linearGradient>
+
+          <linearGradient id="cyan-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#06B6D4" stopOpacity="0.6" />
+            <stop offset="50%" stopColor="#06B6D4" stopOpacity="1" />
+            <stop offset="100%" stopColor="#06B6D4" stopOpacity="0.6" />
+          </linearGradient>
+
+          <linearGradient id="purple-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#A855F7" stopOpacity="0.6" />
+            <stop offset="50%" stopColor="#A855F7" stopOpacity="1" />
+            <stop offset="100%" stopColor="#A855F7" stopOpacity="0.6" />
+          </linearGradient>
+
+          {/* Phase 6: Subtle turbulence filter for atmospheric effect */}
+          <filter id="turbulence" x="0%" y="0%" width="100%" height="100%">
+            <feTurbulence
+              type="fractalNoise"
+              baseFrequency="0.01"
+              numOctaves="2"
+              result="turbulence"
+            />
+            <feDisplacementMap
+              in="SourceGraphic"
+              in2="turbulence"
+              scale="2"
+              xChannelSelector="R"
+              yChannelSelector="G"
+            />
+          </filter>
         </defs>
 
         <rect width="1000" height="600" fill="url(#grid)" />
+
+        {/* Phase 6: Floating particles for atmosphere */}
+        {performanceMode === 'high' && (
+          <g opacity="0.15">
+            {Array.from({ length: 12 }).map((_, i) => {
+              const x = (i * 83 + Math.sin(time * 0.5 + i) * 50) % 1000;
+              const y = (i * 47 + Math.cos(time * 0.3 + i) * 30) % 600;
+              return (
+                <circle
+                  key={`particle-${i}`}
+                  cx={x}
+                  cy={y}
+                  r={1 + Math.sin(time + i) * 0.5}
+                  fill="#FFD700"
+                  opacity={0.3 + Math.sin(time * 2 + i) * 0.2}
+                />
+              );
+            })}
+          </g>
+        )}
 
         {/* Render all threads */}
         {threads.map((thread, threadIndex) => {
@@ -284,7 +681,7 @@ export default function LoomCanvas() {
 
           return (
             <g key={thread.id} opacity={threadOpacity}>
-              {/* Branch connector (if this thread branches from a parent) */}
+              {/* Enhanced branch connector with smooth curves */}
               {isBranch && (() => {
                 const parentThread = threads.find(t => t.id === thread.parentThreadId);
                 if (!parentThread) return null;
@@ -307,27 +704,45 @@ export default function LoomCanvas() {
 
                 const nextX = nodePositions[nextNodeStep].x * 10;
 
+                // Create smooth curve for vertical connector using quadratic bezier
+                const verticalCurve = `M ${branchX} ${parentY * 6} Q ${branchX + 20} ${(parentY * 6 + yPos * 6) / 2} ${branchX} ${yPos * 6}`;
+
+                // Create smooth curve for horizontal connector
+                const horizontalCurve = `M ${branchX} ${yPos * 6} Q ${(branchX + nextX) / 2} ${yPos * 6 - 10} ${nextX} ${yPos * 6}`;
+
                 return (
                   <>
-                    {/* Vertical connector from parent to branch point */}
+                    {/* Curved vertical connector from parent to branch point */}
                     <path
-                      d={`M ${branchX} ${parentY * 6} L ${branchX} ${yPos * 6}`}
+                      d={verticalCurve}
                       fill="none"
                       stroke={threadColor}
                       strokeWidth="2"
                       strokeDasharray="4,4"
                       opacity="0.5"
+                      strokeLinecap="round"
                     />
-                    {/* Horizontal connector from branch point to first node */}
+                    {/* Curved horizontal connector from branch point to first node */}
                     <path
-                      d={`M ${branchX} ${yPos * 6} L ${nextX} ${yPos * 6}`}
+                      d={horizontalCurve}
                       fill="none"
                       stroke={threadColor}
                       strokeWidth={isActiveThread ? 4 : 2}
                       strokeDasharray="4,4"
                       opacity="0.7"
+                      strokeLinecap="round"
                     />
-                    {/* Branch indicator circle at divergence point */}
+                    {/* Enhanced branch indicator with glow */}
+                    <circle
+                      cx={branchX}
+                      cy={yPos * 6}
+                      r="8"
+                      fill={threadColor}
+                      stroke={threadColor}
+                      strokeWidth="2"
+                      opacity="0.3"
+                      filter="url(#glow)"
+                    />
                     <circle
                       cx={branchX}
                       cy={yPos * 6}
@@ -335,7 +750,7 @@ export default function LoomCanvas() {
                       fill={threadColor}
                       stroke={threadColor}
                       strokeWidth="2"
-                      opacity="0.6"
+                      opacity="0.8"
                     />
                     {/* Branch icon */}
                     <text
@@ -352,44 +767,76 @@ export default function LoomCanvas() {
                 );
               })()}
 
-              {/* Timeline path - connect all visible nodes */}
-              {hasNodes && visibleNodes.length >= 1 && (
-                <path
-                  d={(() => {
-                    // For branches, start from branch point, then connect to all visible nodes
-                    let pathCommands = [];
+              {/* Enhanced Timeline path with smooth Catmull-Rom splines + breathing + deformation */}
+              {hasNodes && visibleNodes.length >= 1 && (() => {
+                // Generate control points from visible nodes with wiggle and deform effects
+                const nodeSteps = visibleNodes.map(n => n.step);
+                const wiggleFunction = createWiggleFunction(threadIndex, isActiveThread);
 
-                    if (isBranch && thread.branchPoint !== undefined && nodePositions[thread.branchPoint]) {
-                      // Start from branch point
-                      const branchX = nodePositions[thread.branchPoint].x * 10;
-                      pathCommands.push(`M ${branchX} ${yPos * 6}`);
+                // Phase 4: Deformation function for grabbed thread
+                const deformFunction = draggedNode?.threadId === thread.id
+                  ? (x: number) => calculateDeformationOffset(
+                      (draggedNode.nodeStep / 10) * 1000,
+                      x,
+                      true
+                    )
+                  : undefined;
 
-                      // Connect to all visible nodes
-                      visibleNodes.forEach((node) => {
-                        if (nodePositions[node.step]) {
-                          const x = nodePositions[node.step].x * 10;
-                          pathCommands.push(`L ${x} ${yPos * 6}`);
-                        }
-                      });
-                    } else {
-                      // Non-branch: just connect visible nodes
-                      visibleNodes.forEach((node, idx) => {
-                        if (nodePositions[node.step]) {
-                          const x = nodePositions[node.step].x * 10;
-                          pathCommands.push(idx === 0 ? `M ${x} ${yPos * 6}` : `L ${x} ${yPos * 6}`);
-                        }
-                      });
-                    }
+                const controlPoints = generateThreadControlPoints(
+                  nodeSteps,
+                  yPos * 6,
+                  1000,
+                  wiggleFunction,
+                  deformFunction
+                );
 
-                    return pathCommands.join(' ');
-                  })()}
-                  fill="none"
-                  stroke={threadColor}
-                  strokeWidth={isActiveThread ? 4 : 2}
-                  style={{ cursor: 'pointer' }}
-                  onClick={() => !isActiveThread && setActiveThread(thread.id)}
-                />
-              )}
+                // Generate smooth spline curve through control points
+                const splinePoints = catmullRomSpline(controlPoints, 0.5, 8);
+                const { path: pathData, length: pathLength } = pointsToSVGPath(splinePoints);
+
+                const gradientId =
+                  thread.color === 'gold' ? 'gold-gradient'
+                  : thread.color === 'emerald' ? 'emerald-gradient'
+                  : thread.color === 'cyan' ? 'cyan-gradient'
+                  : thread.color === 'purple' ? 'purple-gradient'
+                  : undefined;
+
+                // Phase 3: Branch reveal animation
+                const progress = revealProgress[thread.id] ?? 1;
+                const isRevealing = progress < 1;
+                const dashOffset = pathLength * (1 - progress);
+
+                return (
+                  <>
+                    {/* Glow layer (wider, semi-transparent) */}
+                    <path
+                      d={pathData}
+                      fill="none"
+                      stroke={threadColor}
+                      strokeWidth={isActiveThread ? 8 : 4}
+                      opacity={isActiveThread ? 0.3 : 0.15}
+                      style={{ cursor: 'pointer' }}
+                      onClick={() => !isActiveThread && setActiveThread(thread.id)}
+                      strokeDasharray={isRevealing ? pathLength : undefined}
+                      strokeDashoffset={isRevealing ? dashOffset : undefined}
+                    />
+                    {/* Main thread path with reveal animation */}
+                    <path
+                      d={pathData}
+                      fill="none"
+                      stroke={gradientId ? `url(#${gradientId})` : threadColor}
+                      strokeWidth={isActiveThread ? 4 : 2}
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      filter={isActiveThread ? 'url(#thread-glow)' : undefined}
+                      style={{ cursor: 'pointer' }}
+                      onClick={() => !isActiveThread && setActiveThread(thread.id)}
+                      strokeDasharray={isRevealing ? pathLength : undefined}
+                      strokeDashoffset={isRevealing ? dashOffset : undefined}
+                    />
+                  </>
+                );
+              })()}
 
               {/* Thread label with delete button */}
               <g
@@ -450,7 +897,7 @@ export default function LoomCanvas() {
                 )}
               </g>
 
-              {/* Decision nodes for this thread - only render visible nodes */}
+              {/* Decision nodes for this thread - only render visible nodes with breathing */}
               {visibleNodes.map((node, nodeIndex) => {
                 const stepIndex = node.step;
                 const pos = nodePositions[stepIndex];
@@ -462,75 +909,152 @@ export default function LoomCanvas() {
                 // Use node.id if available, otherwise use thread-step-index combination
                 const uniqueKey = node.id || `${thread.id}-step${node.step}-idx${nodeIndex}`;
 
+                // Apply wiggle offset to node position
+                const wiggleFunction = createWiggleFunction(threadIndex, isActiveThread);
+                const wiggleOffset = wiggleFunction ? wiggleFunction(pos.x * 10) : 0;
+
+                // Phase 3: Node reveal animation (fade in + scale)
+                const threadProgress = revealProgress[thread.id] ?? 1;
+                const nodeRevealProgress = Math.min(
+                  Math.max((threadProgress - 0.3) / 0.7, 0),
+                  1
+                ); // Nodes appear after 30% of thread is visible
+                const nodeScale = 0.3 + nodeRevealProgress * 0.7; // Scale from 0.3 to 1
+                const nodeOpacity = nodeRevealProgress;
+
+                // Phase 4: Deformation offset if this node is being dragged
+                const isDraggedNode =
+                  draggedNode?.threadId === thread.id && draggedNode?.nodeStep === stepIndex;
+                const deformOffset = isDraggedNode ? pullOffset : { x: 0, y: 0 };
+
+                // Phase 5: Click ripple effect state
+                const isClickedNode =
+                  clickedNode?.threadId === thread.id &&
+                  clickedNode?.nodeStep === stepIndex;
+                const rippleProgress = isClickedNode
+                  ? Math.min((Date.now() - clickedNode.timestamp) / 800, 1)
+                  : 0;
+
+                // Phase 5: Hover scale effect
+                const isHovered = hoveredNode === node?.cardId;
+                const hoverScale = isHovered ? 1.1 : 1;
+
                 return (
                   <g
                     key={uniqueKey}
-                    transform={`translate(${pos.x * 10}, ${yPos * 6})`}
-                    style={{ cursor: 'pointer' }}
+                    transform={`translate(${pos.x * 10 + deformOffset.x}, ${yPos * 6 + wiggleOffset + deformOffset.y})`}
+                    style={{ cursor: isDraggedNode ? 'grabbing' : 'grab' }}
                     onClick={() => {
                       if (!isActiveThread) {
                         setActiveThread(thread.id);
                       }
-                      handleNodeClick(stepIndex);
+                      handleNodeClick(stepIndex, thread.id);
+                    }}
+                    onMouseDown={(e) => {
+                      if (!isSpringBack) {
+                        handleNodeDragStart(e, thread.id, stepIndex, pos.x * 10, yPos * 6 + wiggleOffset);
+                      }
                     }}
                     onMouseEnter={() => setHoveredNode(node?.cardId || null)}
                     onMouseLeave={() => setHoveredNode(null)}
+                    opacity={nodeOpacity}
                   >
-                    {/* Sustainability Score - above node */}
-                    {node.metricsAfter && (
-                      <text
-                        y="-22"
-                        textAnchor="middle"
-                        fill={
-                          node.metricsAfter.sustainabilityScore >= 70 ? '#10B981' :
-                          node.metricsAfter.sustainabilityScore >= 50 ? '#FFD700' :
-                          node.metricsAfter.sustainabilityScore >= 30 ? '#F97316' :
-                          '#EF4444'
-                        }
-                        fontSize="11"
-                        fontWeight="bold"
-                      >
-                        {Math.round(node.metricsAfter.sustainabilityScore)}
-                      </text>
+                    {/* Phase 5: Click ripple effect */}
+                    {isClickedNode && (
+                      <>
+                        {/* Ripple ring 1 */}
+                        <circle
+                          r={rippleProgress * 30}
+                          fill="none"
+                          stroke={threadColor}
+                          strokeWidth="2"
+                          opacity={(1 - rippleProgress) * 0.6}
+                        />
+                        {/* Ripple ring 2 - delayed */}
+                        <circle
+                          r={Math.max(0, (rippleProgress - 0.2) * 35)}
+                          fill="none"
+                          stroke={threadColor}
+                          strokeWidth="1.5"
+                          opacity={Math.max(0, (1 - rippleProgress) * 0.4)}
+                        />
+                      </>
                     )}
 
-                    {/* Node circle */}
-                    <circle
-                      r={isCurrentStep ? 16 : 12}
-                      fill={isCurrentStep ? '#FFD700' : threadColor}
-                      stroke={isCurrentStep ? '#FFD700' : threadColor}
-                      strokeWidth={isCurrentStep ? 3 : 2}
-                      filter={isCurrentStep || hoveredNode === node?.cardId ? 'url(#glow)' : undefined}
-                      className="transition-all duration-300"
-                      style={{
-                        strokeWidth: hoveredNode === node?.cardId ? 3 : (isCurrentStep ? 3 : 2)
-                      }}
-                    />
+                    {/* Enhanced node with reveal + hover + rotation animation */}
+                    <g
+                      transform={`scale(${nodeScale * hoverScale}) rotate(${isHovered ? (Math.sin(time * 2) * 5) : 0})`}
+                      className="transition-transform duration-300"
+                    >
+                      {/* Sustainability Score - above node */}
+                      {node.metricsAfter && (
+                        <text
+                          y="-22"
+                          textAnchor="middle"
+                          fill={
+                            node.metricsAfter.sustainabilityScore >= 70 ? '#10B981' :
+                            node.metricsAfter.sustainabilityScore >= 50 ? '#FFD700' :
+                            node.metricsAfter.sustainabilityScore >= 30 ? '#F97316' :
+                            '#EF4444'
+                          }
+                          fontSize="11"
+                          fontWeight="bold"
+                        >
+                          {Math.round(node.metricsAfter.sustainabilityScore)}
+                        </text>
+                      )}
+                      {/* Outer glow ring */}
+                      {(isCurrentStep || hoveredNode === node?.cardId) && (
+                        <circle
+                          r={isCurrentStep ? 24 : 20}
+                          fill={isCurrentStep ? '#FFD700' : threadColor}
+                          opacity="0.2"
+                          filter="url(#glow)"
+                          className="transition-all duration-300"
+                        />
+                      )}
+                      {/* Main node circle */}
+                      <circle
+                        r={isCurrentStep ? 16 : (hoveredNode === node?.cardId ? 14 : 12)}
+                        fill={isCurrentStep ? '#FFD700' : threadColor}
+                        stroke={isCurrentStep ? '#FFF' : threadColor}
+                        strokeWidth={isCurrentStep ? 2 : (hoveredNode === node?.cardId ? 2.5 : 2)}
+                        filter={isCurrentStep || hoveredNode === node?.cardId ? 'url(#intense-glow)' : 'url(#glow)'}
+                        className="transition-all duration-300"
+                      />
+                      {/* Inner highlight for depth */}
+                      <circle
+                        r={isCurrentStep ? 12 : (hoveredNode === node?.cardId ? 10 : 8)}
+                        fill={isCurrentStep ? '#FFF' : threadColor}
+                        opacity="0.3"
+                        className="transition-all duration-300"
+                      />
 
-                    {/* Step label (only for active thread) */}
-                    {isActiveThread && (
-                      <text
-                        y="35"
-                        textAnchor="middle"
-                        fill="#999"
-                        fontSize="12"
-                        fontWeight="600"
-                      >
-                        {stepIndex === 0 ? 'Now' : `${Math.round(stepIndex * 1.2)}mo`}
-                      </text>
-                    )}
+                      {/* Step label (only for active thread) */}
+                      {isActiveThread && (
+                        <text
+                          y="35"
+                          textAnchor="middle"
+                          fill="#999"
+                          fontSize="12"
+                          fontWeight="600"
+                        >
+                          {stepIndex === 0 ? 'Now' : `${Math.round(stepIndex * 1.2)}mo`}
+                        </text>
+                      )}
 
-                    {/* Decision marker */}
-                    <g opacity={hoveredNode === node?.cardId ? 1 : 0.7}>
-                      <circle r="6" fill={isActiveThread ? '#10B981' : threadColor} />
-                      <text
-                        y="4"
-                        textAnchor="middle"
-                        fill="#000"
-                        fontSize="10"
-                      >
-                        ✓
-                      </text>
+                      {/* Decision marker */}
+                      <g opacity={hoveredNode === node?.cardId ? 1 : 0.7}>
+                        <circle r="6" fill={isActiveThread ? '#10B981' : threadColor} />
+                        <text
+                          y="4"
+                          textAnchor="middle"
+                          fill="#000"
+                          fontSize="10"
+                        >
+                          ✓
+                        </text>
+                      </g>
                     </g>
                   </g>
                 );
