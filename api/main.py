@@ -2,6 +2,7 @@
 FastAPI backend for Threadweaver: Sustainable Futures.
 Provides AI-driven decision generation and autopilot simulation.
 """
+from typing import List
 from fastapi import FastAPI, HTTPException, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
